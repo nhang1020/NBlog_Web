@@ -8,14 +8,14 @@ module.exports = (sequelize, DataTypes) => {
             // define relationship here
             Order.belongsTo(models.User, { foreignKey: 'customerId', as: 'customerData' });
             Order.belongsTo(models.AllCode, { foreignKey: 'status', targetKey: 'keyMap', as: 'statusData' });
-            Order.belongsTo(models.Product, { foreignKey: 'productId', as: 'statusData' });
+            Order.belongsTo(models.Product, { foreignKey: 'productId', as: 'productData' });
         }
     };
     Order.init({
         customerId: DataTypes.STRING,
         sellerId: DataTypes.STRING,
-        productId: DataTypes.INT,
-        quantity: DataTypes.INT,
+        productId: DataTypes.INTEGER,
+        quantity: DataTypes.INTEGER,
         totalPrice: DataTypes.BIGINT,
         status: DataTypes.STRING
     }, {

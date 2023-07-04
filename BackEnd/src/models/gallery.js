@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     };
     Gallery.init({
-        productId: DataTypes.INT,
+        productId: DataTypes.INTEGER,
         folderName: DataTypes.STRING
     }, {
         sequelize,

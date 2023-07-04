@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.createTable('postfiles', {
+        await queryInterface.createTable('posts', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -11,7 +11,16 @@ module.exports = {
             userId: {
                 type: Sequelize.STRING
             },
-            folderName: {
+            topic: {
+                type: Sequelize.STRING
+            },
+            contents: {
+                type: Sequelize.TEXT('long')
+            },
+            theme: {
+                type: Sequelize.STRING
+            },
+            privacy: {
                 type: Sequelize.STRING
             },
             createdAt: {
@@ -25,6 +34,6 @@ module.exports = {
         });
     },
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.dropTable('postfiles');
+        await queryInterface.dropTable('posts');
     }
 };

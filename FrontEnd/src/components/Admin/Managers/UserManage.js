@@ -1,79 +1,65 @@
-import React from 'react';
-import { Table, Space, Tag } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Table, Space } from 'antd';
 import FormUser from './FormUser';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUsers, deleteUser } from '../../../redux/silceReducers/adminReducers';
+import { usersRemainingSelector } from '../../../redux/selector';
+
+import { v1 } from 'uuid';
+
 const columns = [
     {
-        title: 'Name',
-        dataIndex: 'name',
+        title: 'Email',
+        dataIndex: 'email',
     },
     {
-        title: 'Chinese Score',
-        dataIndex: 'chinese',
+        title: 'Full name',
+        dataIndex: 'fullName',
         sorter: {
-            compare: (a, b) => a.chinese - b.chinese,
-            multiple: 3,
-        },
-    },
-    {
-        title: 'Math Score',
-        dataIndex: 'math',
-        sorter: {
-            compare: (a, b) => a.math - b.math,
-            multiple: 2,
-        },
-    },
-    {
-        title: 'English Score',
-        dataIndex: 'english',
-        sorter: {
-            compare: (a, b) => a.english - b.english,
+            compare: (a, b) => a.fullName - b.fullName,
             multiple: 1,
         },
     },
-
+    {
+        title: 'Adress',
+        dataIndex: 'address',
+        sorter: {
+            compare: (a, b) => a.address - b.address,
+            multiple: 1,
+        },
+    },
+    {
+        title: 'Status',
+        dataIndex: 'status',
+    },
     {
         title: 'Action',
-        key: 'action',
-        render: (_, record) => (
-            <Space size="middle">
-                <a>Delete</a>
-                <a>Edit {record.name}</a>
-            </Space>
-        )
+        dataIndex: 'action',
+
     },
-];
-const data = [
-    {
-        key: '1',
-        name: 'John Brown',
-        chinese: 98,
-        math: 60,
-        english: 70,
-    },
-    {
-        key: '2',
-        name: 'Jim Green',
-        chinese: 98,
-        math: 66,
-        english: 89,
-    },
-    {
-        key: '3',
-        name: 'Joe Black',
-        chinese: 98,
-        math: 90,
-        english: 70,
-    },
-    {
-        key: '4',
-        name: 'Jim Red',
-        chinese: 88,
-        math: 99,
-        english: 89,
-    },
+
 ];
 const UserManage = () => {
-
+    const dispatch = useDispatch();
+    // const [users, setUsers] = useState([]);
+    let users = useSelector(usersRemainingSelector);
+    const data = [];
+    users.map((item, index) => {
+        let obj = {};
+        obj.key = index;
+        obj.email = item.email;
+        obj.fullName = `${item.firstName} ${item.lastName}`;
+        obj.address = item.address;
+        obj.status = item.status;
+        obj.action = <a onClick={() => handleDeleteUser(item.id)}>Delete</a>;
+        data.push(obj);
+    })
+    useEffect(() => {
+        dispatch(getUsers("All"));
+    }, []);
+    const handleDeleteUser = (userId) => {
+        dispatch(deleteUser(userId));
+    }
     return (
         <>
             <FormUser />

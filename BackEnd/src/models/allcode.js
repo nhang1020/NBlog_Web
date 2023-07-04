@@ -8,10 +8,11 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
             AllCode.hasMany(models.User, { foreignKey: 'gender', as: 'genderData' });
             AllCode.hasMany(models.Post, { foreignKey: 'topic', as: 'topicData' });
-            AllCode.hasMany(models.Relation, { foreignKey: 'action', as: 'actionData' });
+            AllCode.hasMany(models.Post, { foreignKey: 'privacy', as: 'privacyData' });
+            AllCode.hasMany(models.Relationship, { foreignKey: 'action', as: 'actionData' });
             AllCode.hasMany(models.Product, { foreignKey: 'category', as: 'categoryData' });
-            AllCode.hasMany(models.Order, { foreignKey: 'status', as: 'statusData' });
             AllCode.hasMany(models.Product, { foreignKey: 'quality', as: 'qualityData' });
+            AllCode.hasMany(models.Order, { foreignKey: 'status', as: 'statusData' });
         }
     };
     AllCode.init({
@@ -23,5 +24,5 @@ module.exports = (sequelize, DataTypes) => {
         sequelize,
         modelName: 'AllCode',
     });
-    return Allcode;
+    return AllCode;
 };

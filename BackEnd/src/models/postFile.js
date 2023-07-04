@@ -6,15 +6,15 @@ module.exports = (sequelize, DataTypes) => {
     class PostFile extends Model {
         static associate(models) {
             // define relationship here
-            PostFile.belongsTo(models.Post, { foreignKey: 'postId' });
+            PostFile.belongsTo(models.Product, { foreignKey: 'postId' });
         }
     };
     PostFile.init({
-        postId: DataTypes.INT,
+        postId: DataTypes.INTEGER,
         folderName: DataTypes.STRING
     }, {
         sequelize,
-        modelName: 'postFile',
+        modelName: 'PostFile',
     });
     return PostFile;
 };

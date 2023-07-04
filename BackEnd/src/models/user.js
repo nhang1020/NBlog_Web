@@ -9,11 +9,10 @@ module.exports = (sequelize, DataTypes) => {
             User.belongsTo(models.AllCode, { foreignKey: 'gender', targetKey: 'keyMap', as: 'genderData' });
             User.hasMany(models.Post, { foreignKey: 'userId', as: 'userData' });
             User.hasMany(models.Product, { foreignKey: 'sellerId', as: 'sellerData' });
-            User.hasMany(models.Oder, { foreignKey: 'customerId', as: 'customerData' });
+            User.hasMany(models.Order, { foreignKey: 'customerId', as: 'customerData' });
         }
     };
     User.init({
-        id: DataTypes.STRING,
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         firstName: DataTypes.STRING,
@@ -21,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         address: DataTypes.STRING,
         phoneNumber: DataTypes.STRING,
         gender: DataTypes.STRING,
+        birth: DataTypes.DATE,
         avatar: DataTypes.BLOB('long'),
         role: DataTypes.STRING,
         profile: DataTypes.TEXT('long'),

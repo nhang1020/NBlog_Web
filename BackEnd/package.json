@@ -15,9 +15,6 @@
   "author": "ThanksNhang",
   "license": "ISC",
   "dependencies": {
-    "@babel/core": "^7.22.5",
-    "@babel/node": "^7.22.5",
-    "@babel/preset-env": "^7.22.5",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -28,9 +25,14 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.4.2",
     "nodemailer": "^6.9.3",
-    "nodemon": "^2.0.22",
     "sequelize": "^6.32.1",
-    "sequelize-cli": "^6.6.1",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.5",
+    "@babel/node": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "nodemon": "^2.0.22",
+    "sequelize-cli": "^6.6.1"
   }
 }
