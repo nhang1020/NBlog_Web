@@ -1,0 +1,15 @@
+.content {
+    min-height: 90vh;
+}
+
+.admin-logo {
+    height: auto;
+    overflow: hidden;
+    display: flex;
+
+    .logo {
+        content: url('../../assets/admin-Nblog-logo.png');
+        max-width: 3vw;
+        margin: auto;
+    }
+}

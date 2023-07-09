@@ -5,7 +5,13 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { NavLink } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import 'react-toastify/dist/ReactToastify.css';
+import appSlice from '../redux/silceReducers/appSlice'
+import { useDispatch } from 'react-redux'
 const Header = () => {
+    const dispatch = useDispatch();
+    const handleLogOut = () => {
+        dispatch(appSlice.actions.logOut());
+    }
     return (
         <>
             <Navbar expand="lg" className="bg-body-tertiary">
@@ -38,8 +44,8 @@ const Header = () => {
                                 </NavDropdown.Item>
                                 <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
                                 <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">
-                                    Separated link
+                                <NavDropdown.Item onClick={handleLogOut}>
+                                    Logout
                                 </NavDropdown.Item>
                             </NavDropdown>
                         </Nav>

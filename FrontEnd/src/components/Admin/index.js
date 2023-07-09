@@ -1,14 +1,17 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
+import AnimationPage from "../componentsCustom/AnimationPage";
 function Index() {
     return (
         <>
             <div className="header">
                 <Header />
             </div>
-            <div className="content">
-                <Outlet></Outlet>
-            </div>
+            <AnimationPage>
+                <div className="content">
+                    <Outlet></Outlet>
+                </div>
+            </AnimationPage>
         </>
     );
 }

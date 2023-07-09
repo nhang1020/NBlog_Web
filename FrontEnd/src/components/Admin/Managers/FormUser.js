@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCode, createUser } from '../../../redux/silceReducers/adminReducers';
 import { allCodeRemainingSelector } from '../../../redux/selector';
-import * as adminServices from '../../../services/adminServices'
+// import * as adminServices from '../../../services/adminServices'
 import { toast, ToastContainer } from 'react-toastify';
 
 const normFile = (e) => {
@@ -40,7 +40,8 @@ const FormDisabledDemo = () => {
 
     useEffect(() => {
         dispatch(getAllCode(['gender', 'role']));
-    }, []);
+    }, [dispatch]);
+
     useEffect(() => {
         setAllCodes(data);
     }, [data]);
@@ -151,9 +152,8 @@ const FormDisabledDemo = () => {
                             <Select defaultValue={state.gender} onChange={(event) => onChangeSelect(event, "gender")} >
                                 {allCodes && allCodes.length > 0 &&
                                     allCodes.map((item, index) => {
-                                        if (item.type === 'Gender') {
-                                            return <Select.Option key={item.id} value={item.keyMap}>{item.valueVi}</Select.Option>
-                                        }
+                                        return item.type === 'Gender' ? <Select.Option key={item.id} value={item.keyMap}>{item.valueVi}</Select.Option>
+                                            : ''
                                     })}
                             </Select>
                         </Form.Item>
@@ -161,9 +161,8 @@ const FormDisabledDemo = () => {
                             <Select defaultValue={state.role} onChange={(event) => onChangeSelect(event, "role")} >
                                 {allCodes && allCodes.length > 0 &&
                                     allCodes.map((item, index) => {
-                                        if (item.type === 'Role') {
-                                            return <Select.Option key={item.id} value={item.keyMap}>{item.valueVi}</Select.Option>
-                                        }
+                                        return item.type === 'Role' ? <Select.Option key={item.id} value={item.keyMap}>{item.valueVi}</Select.Option>
+                                            : ''
                                     })}
                             </Select>
                         </Form.Item>
@@ -196,7 +195,7 @@ const FormDisabledDemo = () => {
                     </Form.Item>
 
                     <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile}>
-                        <Upload value={state.avatar} action="/upload.do" accept="image/png, image/jpeg" maxCount={1} listType="picture-card" onChange={getImage}>
+                        <Upload action="/upload.do" accept="image/png, image/jpeg" maxCount={1} listType="picture-card">
 
                             <div>
                                 <PlusOutlined />
@@ -220,7 +219,4 @@ const FormDisabledDemo = () => {
         </div>
     );
 };
-const getImage = (e) => {
-    console.log(e.fileList[0]);
-}
 export default FormDisabledDemo;

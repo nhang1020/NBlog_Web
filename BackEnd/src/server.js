@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import initWebRoutes from "./routes/api";
 import connectDB from './config/connectDB';
+import cookie from 'cookie-parser';
 // import cors from 'cors';
 require('dotenv').config();
 
@@ -26,7 +27,7 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
-
+app.use(cookie());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 

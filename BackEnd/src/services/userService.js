@@ -1,6 +1,6 @@
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
-import _, { join } from 'lodash';
+
 var salt = bcrypt.genSaltSync(10);
 let hashUserPassword = (password) => {
     return new Promise(async (resovle, reject) => {
@@ -27,29 +27,7 @@ let checkEmail = (userEmail) => {
     })
 }
 
-//getAllCode
-let getAllCodeService = (types) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (!types) {
-                resolve({
-                    errCode: 1,
-                    message: 'Missing required parameters!'
-                })
-            } else {
-                let allcode = await db.sequelize.query(`SELECT * FROM allcodes WHERE type IN ('role', 'gender')`, {
-                    nest: true
-                });
-                resolve({
-                    errCode: 0,
-                    data: allcode,
-                })
-            }
-        } catch (error) {
-            reject(error)
-        }
-    })
-}
+
 let createUserService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -61,7 +39,6 @@ let createUserService = (data) => {
                 })
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-                console.log(data.status);
                 let response =
                     await db.User.create({
                         email: data.email,
@@ -143,7 +120,6 @@ let deleteUserService = (userId) => {
     })
 }
 module.exports = {
-    getAllCodeService,
     createUserService,
     getUsersSevice,
     deleteUserService
