@@ -4,6 +4,7 @@ let getPostsService = () => {
     return new Promise(async (resolve, reject) => {
         try {
             let posts = await db.Post.findAll({
+                order: [['createdAt', 'DESC']],
                 include: [
                     { model: db.AllCode, as: 'topicData', attributes: ['valueEn', 'valueVi'] },
                     { model: db.AllCode, as: 'privacyData', attributes: ['valueEn', 'valueVi'] },
@@ -31,13 +32,21 @@ let createPostService = (data) => {
                 contents: data.contents,
                 theme: data.theme,
                 privacy: data.privacy,
-            }, {
-                nest: true
             })
+            let post = await db.Post.findOne({
+                where: { id: response.id },
+                include: [
+                    { model: db.AllCode, as: 'topicData', attributes: ['valueEn', 'valueVi'] },
+                    { model: db.AllCode, as: 'privacyData', attributes: ['valueEn', 'valueVi'] },
+                    { model: db.User, as: 'userData', attributes: ['id', 'firstName', 'lastName'] }
+                ],
+                raw: true,
+                nest: true
+            });
             resolve({
                 errCode: 0,
                 message: 'OK',
-                post: response
+                post: post
             });
         }
         catch (error) {

@@ -26,7 +26,7 @@ const userInfoStorage = localStorage.getItem('userInfo')
 const appSlice = createSlice({
     name: 'app',
     initialState: {
-        user: userInfoStorage ? userInfoStorage : {},
+        user: userInfoStorage ? JSON.parse(userInfoStorage) : {},
         loading: false,
         error: null,
         isLogIn: isLogInStorage ? isLogInStorage : null

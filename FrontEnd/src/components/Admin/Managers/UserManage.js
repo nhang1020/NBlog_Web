@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Space } from 'antd';
+import React, { useEffect } from 'react';
+import { Table } from 'antd';
 import FormUser from './FormUser';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUsers, deleteUser } from '../../../redux/silceReducers/adminReducers';
 import { usersRemainingSelector } from '../../../redux/selector';
-
-import { v1 } from 'uuid';
 
 const columns = [
     {
@@ -56,7 +54,7 @@ const UserManage = () => {
     })
     useEffect(() => {
         dispatch(getUsers("All"));
-    }, []);
+    }, [dispatch]);
     const handleDeleteUser = (userId) => {
         dispatch(deleteUser(userId));
     }

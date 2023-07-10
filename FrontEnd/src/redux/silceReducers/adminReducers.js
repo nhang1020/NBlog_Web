@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as adminServices from "../../services/adminServices";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 export const getAllCode = createAsyncThunk("admin/getAllCode", async (types) => {
     return adminServices.getAllCodeService(types).then((res) =>
@@ -95,7 +95,7 @@ const adminSlice = createSlice({
                     toast.error(res.message);
                     return;
                 } else {
-                    state.users = state.users.filter(user => user.id != res.userId)
+                    state.users = state.users.filter(user => user.id !== res.userId)
                     state.loading = false;
                     state.error = null;
                     toast.success(res.message)

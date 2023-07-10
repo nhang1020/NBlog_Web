@@ -6,44 +6,33 @@
 
     .nav-header {
         box-shadow: 0 5px 5px rgb(231, 231, 231);
+        display: flex;
 
-        .left-header {
-            width: 20%;
-        }
+        background-color: #fff;
 
-        .menu-header {
-            width: 60%;
-            display: flex;
+        .container {
+            .left-header {
+                width: 20%;
+                height: 100%;
+            }
 
-            .navbar-nav {
-                display: flex !important;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
+            .nav-link {
+                font-size: 15pt;
 
-                .nav-link {
-                    color: rgb(110, 110, 110);
-                    font-size: 20px;
-                    margin: 0 0.5vw;
-                    width: 3vw;
-                    display: flex;
-                    justify-content: center;
-                    height: 2vw;
-                    align-items: center;
-                    border-radius: 5px;
+            }
 
-                    &:hover {
-                        background-color: rgb(219, 219, 219);
-                    }
+            .active {
 
-                }
+                background: -webkit-linear-gradient(45deg, #0654b4, #0c7853, #23c189);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
 
-                .active {
-                    background: -webkit-linear-gradient(90deg, #1361c0, #17a171, #7be9c2);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
+            .dropdown-hover {
+                transition: all ease-in-out 0.3s;
 
-                    //box-shadow: inset 0px 0px 7px rgba(0, 0, 0, 0.2), inset 0px -5px 5px rgba(255, 255, 255, 0.2);
+                &:hover {
+                    transform: rotate(-90deg);
                 }
             }
         }
@@ -52,5 +41,19 @@
             width: 20%;
             right: 0;
         }
+    }
+
+}
+
+
+@media only screen and (max-width: 700px) {
+
+    .left-header,
+    .right-header {
+        display: none;
+    }
+
+    .menu-header {
+        margin: 0 3rem;
     }
 }

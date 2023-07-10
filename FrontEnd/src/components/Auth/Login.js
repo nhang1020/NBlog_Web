@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { useDispatch } from 'react-redux'
 import { login, loginSocial } from '../../redux/silceReducers/appSlice';
 import './Login.scss';

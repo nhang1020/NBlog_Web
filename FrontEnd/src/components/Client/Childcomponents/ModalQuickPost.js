@@ -1,6 +1,6 @@
 import { Button, Input, Modal, Card, Avatar, Select, Spin, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPost } from '../../../redux/silceReducers/postSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
@@ -15,23 +15,24 @@ const getBase64 = (file) =>
 const ModalQuickPost = () => {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
-    const [confirmLoading, setConfirmLoading] = useState(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     // const [fileList, setFileList] = useState([]);
     const allCodes = useSelector(allCodeRemainingSelector);
     const [contents, setContents] = useState('');
-
+    const loading = useSelector(state => state.post.loading);
+    const [isLoading, setIsLoading] = useState(false);
+    useEffect(() => {
+        setIsLoading(isLoading);
+    }, [loading])
 
     const showModal = () => {
         setOpen(true);
     };
     const handlePost = () => {
-        setConfirmLoading(true);
 
         setOpen(false);
-        setConfirmLoading(false);
 
         setTimeout(() => {
             dispatch(createPost({
@@ -62,10 +63,10 @@ const ModalQuickPost = () => {
     };
     return (
         <>
-            <span className='m-3' style={{ fontSize: '13pt', cursor: 'pointer' }} onClick={showModal}>
+            {/* <span className='m-3' style={{ fontSize: '13pt', cursor: 'pointer' }} onClick={showModal}>
                 <i className="bi bi-file-image text-success"> </i>
                 <i className="bi bi-pen text-success"> </i>
-            </span>
+            </span> */}
             <Button className='rounded-pill mt-2' size='large'
                 style={{ color: 'silver', width: '100%', textAlign: 'left' }}
                 onClick={showModal} >What are you thinking?</Button>
@@ -74,14 +75,13 @@ const ModalQuickPost = () => {
                 title="CREATE NEW POST"
                 open={open}
                 onOk={handlePost}
-                confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 okText='Post'
                 footer={[<Button
                     disabled={contents ? false : true}
                     key=''
                     onClick={handlePost}>
-                    {confirmLoading ? <Spin /> : 'Post'}
+                    {isLoading ? <Spin /> : 'Post'}
                 </Button>]
                 }
             >

@@ -1,0 +1,26 @@
+.card-header {
+    display: flex;
+
+    .nav-link {
+        margin-top: -3px;
+        font-size: 15px;
+        font-weight: bold;
+        background: -webkit-linear-gradient(0deg, #0b4b9f, #158960, #1ec087);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        &:hover {
+            opacity: 0.7;
+        }
+    }
+
+    .time {
+        color: sil;
+    }
+
+    .avatar {
+        &:hover {
+            opacity: 0.7;
+        }
+    }
+}

@@ -53,7 +53,6 @@ const postSlice = createSlice({
                     state.posts.unshift(action.payload.post);
                     state.loading = false;
                     state.error = null;
-                    toast.success(res.message)
                 }
             })
             .addCase(createPost.rejected, (state, action) => {

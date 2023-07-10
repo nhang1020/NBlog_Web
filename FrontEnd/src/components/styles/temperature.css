@@ -30,18 +30,18 @@ body {
 }
 
 .right-img {
-    width: 180px;
+    width: 11vw;
     border-radius: 20px;
 }
 
 .date {
-    font-size: 14px;
+    font-size: 0.7vw;
     color: rgba(0, 0, 0, 0.5);
     font-weight: bold;
 }
 
 .city {
-    font-size: 21px;
+    font-size: 0.8vw;
     color: rgba(0, 0, 0, 0.7);
     padding-top: 5px;
     text-transform: uppercase;
@@ -50,7 +50,7 @@ body {
 
 .tempreture {
     padding-top: 10px;
-    font-size: 41px;
+    font-size: 2vw;
     color: rgba(0, 0, 0, 0.9);
     font-weight: 100;
 }
