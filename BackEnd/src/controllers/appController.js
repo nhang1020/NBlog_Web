@@ -2,7 +2,7 @@ import appServices from '../services/appServices';
 import emailServices from '../services/emailServices'
 let getAllCode = async (req, res) => {
     try {
-        let data = await appServices.getAllCodeService(req.body);
+        let data = await appServices.getAllCodeService();
         return res.status(200).json(data)
     } catch (error) {
         console.log(error)

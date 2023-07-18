@@ -1,0 +1,72 @@
+.form-group {
+    .select {
+        display: flex;
+        width: 100%;
+
+        .css-1nmdiq5-menu {
+            z-index: 10;
+        }
+
+        .css-13cymwt-control {
+            border: none;
+            box-shadow: 0 2px 7px rgb(224, 224, 224) !important;
+        }
+
+        .css-t3ipsp-control {
+            border-color: white;
+        }
+
+
+        .s1 {
+            width: 50%;
+            display: flex;
+
+            .address {
+                width: 48%;
+                margin: 2%;
+            }
+        }
+
+        .s2 {
+            width: 50%;
+            display: flex;
+
+            .address {
+                width: 48%;
+                margin: 2%;
+            }
+
+            .input {
+                box-shadow: 0 2px 7px rgb(224, 224, 224) !important;
+                border: none;
+            }
+        }
+    }
+}
+
+.edit-btn {
+    margin-left: 10px;
+}
+
+.form {
+    display: flex;
+
+    .control {
+        width: 32%;
+        margin: auto 2%;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .form-group {
+        .select {
+            display: block;
+
+            .s1,
+            .s2 {
+                width: 100%;
+            }
+
+        }
+    }
+}

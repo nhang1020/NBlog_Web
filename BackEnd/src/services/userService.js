@@ -119,8 +119,65 @@ let deleteUserService = (userId) => {
         }
     })
 }
+
+let getUserDetailService = async (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: userId },
+                include: [
+                    { model: db.AllCode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
+                ],
+                raw: true,
+                nest: true
+            })
+            resolve({
+                user: user ? user : {},
+                errCode: 0,
+                message: 'OK'
+            });
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+let editUserService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({ where: { id: data.id }, raw: false });
+            if (user) {
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.phoneNumber = data.phoneNumber;
+                user.address = data.address;
+                user.gender = data.gender;
+                user.birth = data.birth;
+                user.profile = data.profile;
+                if (data.avatar) {
+                    user.avatar = data.avatar;
+                }
+                await user.save();
+                let resUser = await db.User.findOne({ where: { id: data.id } });
+                resolve({
+                    user: resUser,
+                    errCode: 0,
+                    message: 'Update user is success.'
+                });
+            } else {
+                resolve({
+                    errCode: 1,
+                    message: 'User is not found'
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 module.exports = {
     createUserService,
     getUsersSevice,
-    deleteUserService
+    deleteUserService,
+    getUserDetailService,
+    editUserService
 }

@@ -1,7 +1,7 @@
 import axios from '../utils/axios';
 
-const getAllCodeService = (types) => {
-    return axios.post(`/api/get-allcode`, types);
+const getAllCodeService = () => {
+    return axios.post(`/api/get-allcode`);
 }
 const createUserService = (data) => {
     return axios.post(`/api/create-user`, data);

@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as adminServices from "../../services/adminServices";
 import { toast } from 'react-toastify';
 
-export const getAllCode = createAsyncThunk("admin/getAllCode", async (types) => {
-    return adminServices.getAllCodeService(types).then((res) =>
+export const getAllCode = createAsyncThunk("admin/getAllCode", async () => {
+    return adminServices.getAllCodeService().then((res) =>
         res.data
     );
 });
@@ -70,13 +70,13 @@ const adminSlice = createSlice({
             })
             .addCase(createUser.fulfilled, (state, action) => {
                 let res = action.payload;
+                state.loading = false;
+                state.error = null;
                 if (res && res.errCode === 1) {
                     toast.error(res.message);
                     return;
                 } else {
                     state.users.push(action.payload.user);
-                    state.loading = false;
-                    state.error = null;
                     toast.success(res.message)
                 }
             })
@@ -91,13 +91,13 @@ const adminSlice = createSlice({
             })
             .addCase(deleteUser.fulfilled, (state, action) => {
                 let res = action.payload;
+                state.loading = false;
+                state.error = null;
                 if (res && res.errCode === 1) {
                     toast.error(res.message);
                     return;
                 } else {
                     state.users = state.users.filter(user => user.id !== res.userId)
-                    state.loading = false;
-                    state.error = null;
                     toast.success(res.message)
                 }
             })

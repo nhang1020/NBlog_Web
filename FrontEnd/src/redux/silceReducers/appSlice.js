@@ -20,15 +20,16 @@ export const sendEmail = createAsyncThunk("app/sendEmail", async (data) => {
     );
 });
 
-const isLogInStorage = localStorage.getItem('isLogIn')
-const userInfoStorage = localStorage.getItem('userInfo')
-
+const isLogInStorage = localStorage.getItem('isLogIn');
+const userInfoStorage = localStorage.getItem('userInfo');
+const language = localStorage.getItem('language');
 const appSlice = createSlice({
     name: 'app',
     initialState: {
         user: userInfoStorage ? JSON.parse(userInfoStorage) : {},
         loading: false,
         error: null,
+        language: language ? language : 'vi',
         isLogIn: isLogInStorage ? isLogInStorage : null
     },
     reducers: {
@@ -36,7 +37,11 @@ const appSlice = createSlice({
             state.isLogIn = null;
             state.user = {}
             localStorage.clear();
-        }
+        },
+        changeLanguage: (state, action) => {
+            state.language = action.payload;
+            localStorage.setItem('language', action.payload)
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -47,13 +52,13 @@ const appSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 let res = action.payload;
+                state.loading = false;
+                state.error = null;
                 if (res && res.errCode !== 0) {
                     toast.error(res.message);
                     return;
                 } else {
                     state.user = res.user;
-                    state.loading = false;
-                    state.error = null;
                     localStorage.setItem('isLogIn', true);
                     localStorage.setItem('userInfo', JSON.stringify(res.user));
                     state.isLogIn = true;
@@ -84,13 +89,13 @@ const appSlice = createSlice({
             })
             .addCase(loginSocial.fulfilled, (state, action) => {
                 let res = action.payload;
+                state.loading = false;
+                state.error = null;
                 if (res && res.errCode !== 0) {
                     toast.error(res.message);
                     return;
                 } else {
                     state.user = res.user;
-                    state.loading = false;
-                    state.error = null;
                     localStorage.setItem('isLogIn', true);
                     localStorage.setItem('userInfo', JSON.stringify(res.user));
                     state.isLogIn = true;

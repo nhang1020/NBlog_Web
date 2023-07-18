@@ -39,7 +39,7 @@ const FormDisabledDemo = () => {
 
 
     useEffect(() => {
-        dispatch(getAllCode(['gender', 'role']));
+        dispatch(getAllCode());
     }, [dispatch]);
 
     useEffect(() => {

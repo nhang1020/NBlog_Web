@@ -35,7 +35,7 @@ let handleLoginService = (email, password) => {
             let isExist = await checkEmail(email)
             if (isExist) {
                 let user = await db.User.findOne({
-                    attributes: ['email', 'role', 'password', 'firstName', 'lastName'],
+                    attributes: ['id', 'email', 'role', 'password', 'firstName', 'lastName', 'avatar'],
                     where: { email: email },
                     raw: true
                 })
@@ -73,7 +73,7 @@ let handleLoginSocialService = async (data) => {
             if (isExist) {
                 //login
                 let user = await db.User.findOne({
-                    attributes: ['email', 'role', 'firstName', 'lastName'],
+                    attributes: ['id', 'email', 'role', 'firstName', 'lastName', 'avatar'],
                     where: { email: data.email },
                     raw: true
                 })
@@ -92,7 +92,7 @@ let handleLoginSocialService = async (data) => {
                         status: 1
                     },)
                 let user = await db.User.findOne({
-                    attributes: ['email', 'role', 'firstName', 'lastName'],
+                    attributes: ['id', 'email', 'role', 'firstName', 'lastName', 'avatar'],
                     where: { email: response.email },
                     raw: true
                 })
@@ -110,23 +110,17 @@ let handleLoginSocialService = async (data) => {
 }
 
 //getAllCode
-let getAllCodeService = (types) => {
+let getAllCodeService = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!types) {
-                resolve({
-                    errCode: 1,
-                    message: 'Missing required parameters!'
-                })
-            } else {
-                let allcode = await db.sequelize.query(`SELECT * FROM allcodes WHERE type IN ('role', 'gender')`, {
-                    nest: true
-                });
-                resolve({
-                    errCode: 0,
-                    data: allcode,
-                })
-            }
+            let allcode = await db.sequelize.query(`SELECT * FROM allcodes`, {
+                nest: true
+            });
+            resolve({
+                errCode: 0,
+                data: allcode,
+            })
+
         } catch (error) {
             reject(error)
         }

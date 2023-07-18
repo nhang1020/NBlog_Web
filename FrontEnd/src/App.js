@@ -12,6 +12,7 @@ import NotFound from './components/Client/Pages/NotFound'
 import Toast from './components/componentsCustom/toast';
 import appSlice from './redux/silceReducers/appSlice'
 import Product from './components/Client/Pages/Products'
+import PersonalPage from './components/Client/Pages/PersonalPage'
 
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, useState } from 'react';
@@ -40,7 +41,7 @@ function App() {
   return (
     <>
       <AnimatePresence mode='wait' initial={false}>
-
+        {/* client route */}
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
             <PrivateRoute>
@@ -50,21 +51,26 @@ function App() {
             <Route index element={<Home />} />
             <Route path='products' element={<Product />} />
             <Route path="/*" element={<NotFound />} />
+            <Route path='/user/info/:id' element={<PersonalPage />} />
           </Route>
+
+          {/* admin route */}
           <Route path="/admin" element={userRole === "R0" ?
             <PrivateRoute>
               <Admin />
             </PrivateRoute>
             :
-            <Navigate to='/' replace />
+            <Navigate to='/not-found' replace />
           } >
+
             <Route index element={<AdminHome />} />
             <Route path="users-manage" element={<UserManage />} />
             <Route path="posts-manage" element={<PostManage />} />
           </Route>
+
+          {/* login route */}
           <Route path='/login' element={isLogIn ? <Navigate to='/' /> : <Login />} />
           <Route path='/register' element={isLogIn ? <Navigate to='/' /> : <Register />} />
-          {/* <Route path="/login" element={isLogIn ? <Navigate to='/' replace /> : <Login />} />*/}
         </Routes>
 
       </AnimatePresence>

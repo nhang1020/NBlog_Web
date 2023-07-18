@@ -1,86 +1,12 @@
 .contain {
     display: flex;
     width: 100%;
-    background-color: whitesmoke;
-
-    .left-content {
-        width: 20%;
-        position: fixed;
-        min-height: 95vh;
-        justify-content: center;
-        margin-top: 4.5rem;
-
-        .calendar {
-            margin: auto;
-            box-shadow: 0px 23px 25px -26px #939394;
-
-        }
-    }
+    background-color: rgb(251, 250, 250);
+    transition: all ease-in-out 0.3s;
 
     .main-content {
-        width: 70%;
-        overflow-y: auto;
-        margin: 0 30%;
-        margin-top: 4.5rem;
-        padding: 2rem;
+        width: 100%;
         min-height: 90vh;
-
-        .ant-card {
-            .ant-card-body {
-                .user {
-                    display: flex;
-
-                    .tittle {
-                        margin: -3px 0 5px 5px;
-
-                        .fullname {
-                            margin: 0;
-                            font-size: 10pt;
-                            font-weight: 600;
-                            background: -webkit-linear-gradient(45deg, #0654b4, #0c7853, #23c189);
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                            cursor: pointer;
-
-                            &:hover {
-                                opacity: 0.7;
-                            }
-                        }
-
-                        .time {
-                            color: gray;
-                        }
-                    }
-
-                }
-            }
-        }
     }
 
-    .right-content {
-        margin-top: 4.5rem;
-        width: 20%;
-        position: fixed;
-        right: 0;
-        min-height: 95vh;
-    }
-}
-
-@media only screen and (max-width: 1240px) {
-
-    .left-content,
-    .right-content {
-        display: none;
-    }
-
-    .main-content {
-        padding: 0;
-        margin: auto !important;
-    }
-}
-
-@media only screen and (max-width: 700px) {
-    .main-content {
-        min-width: 100%;
-    }
 }

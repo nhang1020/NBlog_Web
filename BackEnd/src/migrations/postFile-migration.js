@@ -8,11 +8,11 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            userId: {
-                type: Sequelize.STRING
+            postId: {
+                type: Sequelize.INTEGER
             },
-            folderName: {
-                type: Sequelize.STRING
+            image: {
+                type: Sequelize.BLOB('long')
             },
             createdAt: {
                 allowNull: false,

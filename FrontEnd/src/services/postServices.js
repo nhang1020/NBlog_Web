@@ -6,7 +6,11 @@ const createPostService = (data) => {
 const getPostsService = () => {
     return axios.get(`/api/get-posts`);
 }
+const deletePostService = (id) => {
+    return axios.delete(`/api/delete-post?id=${id}`);
+}
 export {
     createPostService,
-    getPostsService
+    getPostsService,
+    deletePostService
 }

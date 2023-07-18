@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     };
     PostFile.init({
         postId: DataTypes.INTEGER,
-        folderName: DataTypes.STRING
+        image: DataTypes.BLOB('long'),
     }, {
         sequelize,
         modelName: 'PostFile',
