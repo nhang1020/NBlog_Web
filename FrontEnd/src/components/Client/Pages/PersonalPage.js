@@ -1,107 +1,137 @@
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import './styles/PersonalPage.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useEffect, useState } from 'react';
-import { Card, Empty, Popover, Skeleton } from 'antd'
+import React, { useEffect, useState, useTransition } from 'react';
+import { Card, Empty, Popover, Skeleton, Spin } from 'antd'
 import SocialModal from './PersonalComponents/SocialModal'
 import DetailBioModal from './PersonalComponents/DetailBioModal';
-import { Scrollbars } from 'react-custom-scrollbars-2';
-import { getUserDetail } from '../../../redux/silceReducers/userSlice';
-import { userDetailRemainingSelector } from '../../../redux/selector';
+import { getFollows, getUserDetail } from '../../../redux/silceReducers/userSlice';
+import { relationshipsRemainingSelector, userDetailRemainingSelector, userInfoSelector } from '../../../redux/selector';
 import AvatarModal from './PersonalComponents/AvatarModal';
 import { useTranslation } from 'react-i18next'
-const Buffer = require('buffer/').Buffer
+import MyPost from './PersonalComponents/MyPost';
+import { noAvatar, socialLink, convertImage } from '../../../utils/constants';
+
+import Lighbox from '../../componentsCustom/Lightbox';
+
+import ModalQuickPost from './HomeComponents/MainComponents/ModalQuickPost'
 const PersonalPage = () => {
     const { t } = useTranslation();
     const language = useSelector(state => state.app.language);
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const userInfo = useSelector(userInfoSelector);
     const getUser = useSelector(userDetailRemainingSelector);
-    const [isLoading, setIsLoading] = useState(true);
+    const images = useSelector(state => state.post.images);
     const [user, setUser] = useState({});
-    const [imageBase64, setImageBase64] = useState('');
+    const [isPending, startTransition] = useTransition();
+    const [galleries, setGalleries] = useState([]);
+    const [index, setIndex] = useState(-1);
+    const relationships = useSelector(relationshipsRemainingSelector);
     useEffect(() => {
-        dispatch(getUserDetail(id))
-            .then((res) => {
-                setIsLoading(false);
-                if (!res.payload.id) {
-                    navigate('not-found')
-                }
-            })
-            .catch(() => setIsLoading(false));
-        ;
+        startTransition(() => {
+            dispatch(getUserDetail(id))
+                .then((res) => {
+                    if (!res.payload.id) {
+                        navigate('not-found')
+                    }
+                });
+            if (!relationships.length) {
+                dispatch(getFollows());
+            }
+        })
 
     }, [id, dispatch]);
 
     useEffect(() => {
         setUser(getUser);
-        if (getUser.avatar) {
-            const base64String = new Buffer(getUser.avatar, 'base64').toString('binary');
-            setImageBase64(base64String);
-        }
-        if (getUser.avatar == null) {
-            setImageBase64('https://anubis.gr/wp-content/uploads/2018/03/no-avatar.png')
-        }
     }, [getUser])
-
-    const socialLink = { facebook: 'facebook', youtube: 'youtube', twitter: 'twitter' }
+    useEffect(() => {
+        if (images.length) {
+            let myGalleries = images
+                .filter(item => item.userId == id)
+                .map(item => ({ src: convertImage(item.image), width: 800, height: 600 }));
+            setGalleries(myGalleries);
+        }
+    }, [images]);
     return (
         <>
-            {isLoading === false ?
-                <div className='personal-container'>
-                    <div className='info-content'>
-                        <div className='info-header'>
-                            <AvatarModal id={id} image={`${imageBase64}`} />
-                            <div className='name'>
-                                <h4>{language === 'vi' ? `${user.lastName} ${user.firstName} ` :
-                                    `${user.firstName} ${user.lastName} `}
-                                    {user.role === 'R0' ?
-                                        <Popover content={t("admin")} placement='topLeft'>
-                                            <i className="bi bi-patch-check-fill text-primary"></i>
-                                        </Popover> : ''}
+            <div className='personal-container'>
+                <div className='background'></div>
+                <div className='info-content'>
+                    <div className='info-header'>
+                        <AvatarModal id={id} image={getUser.avatar && getUser.avatar.data.length > 0 ? convertImage(getUser.avatar) : noAvatar} />
+                        <div className='name'>
+                            <h4>{language === 'vi' ? `${user.lastName} ${user.firstName} ` :
+                                `${user.firstName} ${user.lastName} `}
+                                {user.role === 'R0' ?
+                                    <Popover content={t("admin")} placement='topLeft'>
+                                        <i className="bi bi-patch-check-fill text-primary"></i>
+                                    </Popover> : ''}
 
-                                </h4>
-                                <p> {user.email} <i className="bi bi-envelope-at-fill"></i></p>
-                                <p className='social-link'>
-                                    <Link className='nav-link'> <i className="bi bi-facebook text-primary"></i></Link>
-                                    <Link className='nav-link'> <i className="bi bi-youtube text-danger"></i></Link>
-                                    <Link className='nav-link'> <i className="bi bi-twitter text-info"></i></Link>
+                            </h4>
+                            <p> {user.email} <i className="bi bi-envelope-at-fill"></i></p>
+                            <p className='social-link'>
+                                <a href='https://www.facebook.com/profile.php?id=100011397988347' target='_blank' className='nav-link'> <i className="bi bi-facebook text-primary"></i></a>
+                                <a className='nav-link'> <i className="bi bi-youtube text-danger"></i></a>
+                                <a className='nav-link'> <i className="bi bi-twitter text-info"></i></a>
 
-                                    <SocialModal socialLink={socialLink} />
-                                </p>
-                            </div>
+                                <SocialModal socialLink={socialLink} id={id} user={userInfo} relationships={relationships} />
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className='infomation'>
+                        <h5>{t("introduce")}</h5>
+                        <div className='table'>
+                            <p><i className="bi bi-pin-map-fill"></i> {user.address ? user.address : 'Chưa cập nhật'}</p>
+                            <p><i className="bi bi-person-heart"></i>
+                                &nbsp;
+                                {relationships.length > 0 && (relationships.filter(rel => rel.receiverId == id).length)}
+                                &nbsp;
+                                {t("follower")}</p>
                         </div>
 
-                        <div className='infomation'>
-                            <h5>{t("introduce")}</h5>
-                            <div className='table'>
-                                <p><i className="bi bi-pin-map-fill"></i> {user.address ? user.address : 'Chưa cập nhật'}</p>
-                                <p><i className="bi bi-person-heart"></i> 10 {t("follower")}</p>
-                            </div>
+                        <DetailBioModal user={user} />
 
-                            <DetailBioModal user={user} />
-
-                            <Card title={t("photo")} extra={<NavLink>{t("view-all")}</NavLink>}>
-                                {!id.null ?
-                                    <Empty description={t("empty")} /> : ''
+                        <Card title={t("photo")} extra={<button className='nav-link' onClick={() => setIndex(0)}>{t("view-all")}</button>} className='shadow-1'>
+                            <div className='galleries'>
+                                {galleries && galleries.slice(0, 4).map((item, index) => {
+                                    return <div className='photo' key={index} onClick={() => setIndex(index)}
+                                        style={{ background: `url(${item.src})` }}
+                                    >
+                                    </div>
+                                })
                                 }
-                            </Card>
-                        </div>
-                    </div>
+                                {galleries.length > 4 && (
+                                    <div className='more-photos' style={{ background: `url(${galleries[4].src})` }} onClick={() => setIndex(4)}>
+                                        <h3>+{galleries.length - 4}</h3>
+                                    </div>
+                                )}
+                                <Lighbox index={index} setIndex={setIndex} photos={galleries} />
 
-
-                    <div className='post-content'>
-                        <Scrollbars style={{ width: '100%', height: '1000px' }}>
-                            <div className='m-3'>
-                                <Skeleton /><Skeleton /><Skeleton /><Skeleton /><Skeleton /><Skeleton /><Skeleton /><Skeleton />
+                                {!galleries.length ? <Empty description={t("empty")} style={{ width: '100%' }} /> : null}
                             </div>
-                        </Scrollbars>
-                    </div>
+                        </Card>
 
+                    </div>
                 </div>
-                : 'Loading'
-            }
+
+                <div className='post-content'>
+                    <div className='m-3'>
+                        {userInfo.id == id ?
+                            <Card title={t("create-post")} className='m-3 card-custom'>
+                                <ModalQuickPost />
+                            </Card>
+                            : null
+                        }
+                        <MyPost userId={id} />
+                    </div>
+                </div>
+
+            </div >
+
         </>
     )
 }

@@ -44,6 +44,15 @@ module.exports = {
             token: {
                 type: Sequelize.STRING
             },
+            facebook: {
+                type: Sequelize.STRING
+            },
+            youtube: {
+                type: Sequelize.STRING
+            },
+            twitter: {
+                type: Sequelize.STRING
+            },
             status: {
                 type: Sequelize.BOOLEAN
             },

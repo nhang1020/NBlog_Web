@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             User.hasMany(models.Post, { foreignKey: 'userId', as: 'userData' });
             User.hasMany(models.Product, { foreignKey: 'sellerId', as: 'sellerData' });
             User.hasMany(models.Order, { foreignKey: 'customerId', as: 'customerData' });
+            User.hasMany(models.Comment, { foreignKey: 'userId', as: 'userComment' });
         }
     };
     User.init({
@@ -25,7 +26,10 @@ module.exports = (sequelize, DataTypes) => {
         role: DataTypes.STRING,
         profile: DataTypes.TEXT('long'),
         token: DataTypes.STRING,
-        status: DataTypes.BOOLEAN
+        status: DataTypes.BOOLEAN,
+        facebook: DataTypes.STRING,
+        twitter: DataTypes.STRING,
+        youtube: DataTypes.STRING,
     }, {
         sequelize,
         modelName: 'User',

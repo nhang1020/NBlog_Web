@@ -14,9 +14,9 @@ export const formatDateVi = (timeVal) => {
         let hours = Math.floor(timeDifference / 60); // Giờ
         let minutes = timeDifference % 60;
         if (hours > 0) {
-            dateString = `${hours} tiếng trước`
+            dateString = `${hours} giờ`
         } else {
-            dateString = `${minutes} phút trước`;
+            dateString = `${minutes} phút`;
         }
     } else {
         let time = timeVal.getHours().toString().padStart(2, '0') + ':' + timeVal.getMinutes().toString().padStart(2, '0');
@@ -39,9 +39,9 @@ export const formatDateEn = (timeVal) => {
         let hours = Math.floor(timeDifference / 60); // Giờ
         let minutes = timeDifference % 60;
         if (hours > 0) {
-            dateString = `${hours} hours ago`
+            dateString = `${hours} hours`
         } else {
-            dateString = `${minutes} minutes ago`;
+            dateString = `${minutes} minutes`;
         }
     } else {
         month = moment().month(month - 1);

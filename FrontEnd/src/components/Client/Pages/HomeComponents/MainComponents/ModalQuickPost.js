@@ -1,15 +1,15 @@
-import { Button, Input, Modal, Card, Avatar, Select, Spin, Upload } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Button, Input, Modal, Card, Avatar, Select, Col, Row, Upload, Popover, Radio } from 'antd';
+import { SmileOutlined, StopOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { Col, Row } from 'antd'
-import { createPost } from '../../../redux/silceReducers/postSlice'
+import { createPost } from '../../../../../redux/silceReducers/postSlice'
 import { useDispatch, useSelector } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
-import { allCodeRemainingSelector, userInfoSelector } from '../../../redux/selector'
+import { allCodeRemainingSelector, userInfoSelector } from '../../../../../redux/selector'
 import { useTranslation } from 'react-i18next';
-
+import { convertImage, icons } from '../../../../../utils/constants';
 import imageCompression from 'browser-image-compression';
-
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react';
+import './ModalQuickPost.scss'
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -17,7 +17,6 @@ const getBase64 = (file) =>
         reader.onload = () => resolve(reader.result);
         reader.onerror = (error) => reject(error);
     });
-const icons = [<i className="bi bi-globe-americas"></i>, <i className="bi bi-person-heart"></i>, <i className="bi bi-file-earmark-lock2"></i>]
 const { TextArea } = Input;
 
 
@@ -29,13 +28,13 @@ const ModalQuickPost = () => {
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const user = useSelector(userInfoSelector);
-    // const [fileList, setFileList] = useState([]);
     const allCodes = useSelector(allCodeRemainingSelector);
     const [contents, setContents] = useState('');
     const [privacy, setPrivacy] = useState('P0');
+    const [theme, setTheme] = useState('none');
     const [fileList, setFileList] = useState([]);
-    const [image, setImage] = useState(null);
-    let photo = "";
+    const [disableImage, setDisableImage] = useState(false);
+    const language = useSelector(state => state.app.language);
     const showModal = () => {
         setOpen(true);
         setContents('');
@@ -43,14 +42,17 @@ const ModalQuickPost = () => {
     };
     const handlePost = () => {
         setOpen(false);
-        dispatch(createPost({
-            userId: user.id,
-            topic: 'T1',
-            privacy: privacy,
-            contents: contents,
-            theme: 'danger',
-            listImage: fileList
-        }));
+        setTimeout(() => {
+            dispatch(createPost({
+                userId: user.id,
+                topic: 'T1',
+                privacy: privacy,
+                contents: contents,
+                theme: theme,
+                listImage: fileList
+            }));
+        }, 500)
+
     };
     const handleCancel = () => {
         setOpen(false);
@@ -73,9 +75,6 @@ const ModalQuickPost = () => {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
     const handleChangeImage = (data) => {
-
-        // console.log(newWards);
-        // setFileList(newWards);
         convertImagesToBase64(data.fileList)
             .then((base64Strings) => {
                 setFileList(base64Strings) // Mảng chứa các chuỗi base64 của hình ảnh
@@ -84,12 +83,26 @@ const ModalQuickPost = () => {
                 console.error(error);
             });
     }
+    const onChangeTheme = (e) => {
+        let value = e.target.value
+        setTheme(value);
+        displayTheme(value);
+        if (value === 'none') {
+            setDisableImage(false);
+        } else {
+            setDisableImage(true);
+        }
 
-
+    }
+    const displayTheme = (value) => {
+        document.getElementById('write-content').classList.remove(theme);
+        document.getElementById('write-content').classList.add(value);
+    }
+    // const [styleTheme, setStyleTheme] = useState()
     function convertImagesToBase64(images) {
         const options = {
             maxSizeMB: 1,
-            maxWidthOrHeight: 200,
+            maxWidthOrHeight: 300,
             useWebWorker: true,
         }
         const promises = images.map((image) => {
@@ -116,6 +129,12 @@ const ModalQuickPost = () => {
         return Promise.all(promises);
     }
     let i = 0;
+    const onEmojiSelect = (value) => {
+        setContents(preValue => preValue + value.native)
+    }
+    const emoji = (
+        <Picker data={data} onEmojiSelect={onEmojiSelect} />
+    );
     return (
         <>
             <Button className='rounded-pill' size='large'
@@ -123,16 +142,16 @@ const ModalQuickPost = () => {
                 onClick={showModal} >{`Hey ${user.firstName}! ${t("what-think")}`}</Button>
 
             <Modal
+                width={'700px'}
                 title="Tạo bài viết mới"
                 centered
                 open={open}
                 onOk={handlePost}
                 onCancel={handleCancel}
-                okText='Post'
                 footer={[<Button
-                    disabled={contents ? false : true}
+                    disabled={contents || fileList ? false : true}
                     key=''
-                    onClick={handlePost}>Post
+                    onClick={handlePost}>{t("create")}
                 </Button>]
                 }
             >
@@ -140,8 +159,11 @@ const ModalQuickPost = () => {
                     <Row>
                         {user ?
                             <Col span={15}>
-                                <Avatar size='large' src="https://xsgames.co/randomusers/avatar.php?g=pixel" />
-                                <strong>{`${user.lastName} ${user.firstName}`}</strong>
+                                {user.avatar ? <Avatar size='large' src={convertImage(user.avatar)} /> :
+                                    <Avatar size='large' src="https://xsgames.co/randomusers/avatar.php?g=pixel" />
+                                }
+                                <strong className='m-2'>{language === 'vi' ? `${user.lastName} ${user.firstName}`
+                                    : `${user.firstName} ${user.lastName}`}</strong>
                             </Col> : ''
                         }
                         <Col span={9}>
@@ -154,7 +176,7 @@ const ModalQuickPost = () => {
                                     allCodes.map((item, index) => {
                                         return item.type === 'Privacy' ?
                                             <Select.Option value={item.keyMap} key={index} >
-                                                {icons[i++]} {item.valueVi}
+                                                {icons[i++]} {language === 'vi' ? item.valueVi : item.valueEn}
                                             </Select.Option>
                                             : ''
                                     })
@@ -163,30 +185,64 @@ const ModalQuickPost = () => {
                         </Col>
                     </Row>
                 </Card>
+
                 <TextArea
                     onChange={handleOnchangeContent}
                     placeholder={t("what-think")}
-                    className='mt-3 mb-5'
+                    className='mt-3 mb-5 content '
                     size='large'
                     bordered={false}
                     value={contents}
+                    rows={7}
+                    id='write-content'
                 />
+                <div className='content-more'>
+                    <div className='theme'>
+                        <Radio.Group
+                            value={theme} buttonStyle="outline"
+                            onChange={onChangeTheme}>
+                            <Radio.Button className="custom-button" value="none">
+                            </Radio.Button>
+                            <Radio.Button className="custom-button-danger" value="danger">
+
+                            </Radio.Button>
+                            <Radio.Button className="custom-button-warning" value="warning">
+
+                            </Radio.Button>
+                            <Radio.Button className="custom-button-success" value="success">
+
+                            </Radio.Button>
+                            <Radio.Button className="custom-button-primary" value="primary">
+
+                            </Radio.Button>
+                            <Radio.Button className="custom-button-gradient" value="gradient">
+
+                            </Radio.Button>
+                        </Radio.Group>
+                    </div>
+                    <div className='emoji'>
+                        <Popover placement="bottomRight" content={emoji} >
+                            <Button className='border-0'><SmileOutlined /></Button>
+                        </Popover>
+                    </div>
+                </div>
                 <hr />
                 <Upload method='GET'
                     onPreview={handlePreview}
                     accept="image/png, image/jpeg, image/jpg"
-                    maxCount={5} listType="picture-card"
+                    maxCount={6} listType="picture-card"
                     multiple={true}
                     onChange={handleChangeImage}
+                    disabled={disableImage}
                 >
                     <div>
-                        <PlusOutlined />
+
                         <div
                             style={{
                                 marginTop: 8,
                             }}
                         >
-                            Upload
+                            <h3>+ <i className="bi bi-file-earmark-image"></i></h3>
                         </div>
                     </div>
                 </Upload>
@@ -201,7 +257,6 @@ const ModalQuickPost = () => {
                     />
                 </Modal>
             </Modal >
-            <ToastContainer />
         </>
     );
 };

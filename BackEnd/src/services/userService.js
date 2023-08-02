@@ -1,5 +1,6 @@
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
+import { Op } from 'sequelize';
 
 var salt = bcrypt.genSaltSync(10);
 let hashUserPassword = (password) => {
@@ -65,7 +66,8 @@ let createUserService = (data) => {
         }
     })
 }
-let getUsersSevice = async (limit) => {
+let getUsersSevice = async (option) => {
+    let limit = option.limit;
     return new Promise(async (resolve, reject) => {
         try {
             let users = null;
@@ -77,10 +79,10 @@ let getUsersSevice = async (limit) => {
                     ],
                 });
             } else {
-                console.log(limit);
                 users = await db.User.findAll({
                     limit: +limit,
-                    attributes: { exclude: ['password'] },
+                    where: option.userId ? { id: { [Op.ne]: option.userId } } : {},
+                    attributes: ['id', 'firstName', 'lastName', 'avatar', 'role'],
                     order: [
                         ['createdAt', 'DESC'],
                     ],
@@ -143,6 +145,7 @@ let getUserDetailService = async (userId) => {
 }
 let editUserService = (data) => {
     return new Promise(async (resolve, reject) => {
+
         try {
             let user = await db.User.findOne({ where: { id: data.id }, raw: false });
             if (user) {
@@ -151,8 +154,8 @@ let editUserService = (data) => {
                 user.phoneNumber = data.phoneNumber;
                 user.address = data.address;
                 user.gender = data.gender;
-                user.birth = data.birth;
-                user.profile = data.profile;
+                data.birth ? user.birth = data.birth : '',
+                    user.profile = data.profile;
                 if (data.avatar) {
                     user.avatar = data.avatar;
                 }
@@ -174,10 +177,81 @@ let editUserService = (data) => {
         }
     })
 }
+
+let followExists = async (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let relate = await db.Relationship.findOne({ where: { performerId: data.performerId, receiverId: data.receiverId } });
+            if (relate) {
+                resolve({
+                    check: true,
+                    idRelate: relate.id
+                });
+            } else {
+                resolve({
+                    check: false,
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+let followUserService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.performerId || !data.receiverId) {
+                resolve({
+                    errCode: 1,
+                    message: "Missing parameters"
+                })
+            }
+            let res = await followExists(data);
+            let response = {};
+            if (res.check) {
+                await db.Relationship.destroy({ where: { performerId: data.performerId, receiverId: data.receiverId } })
+                response = res.idRelate;
+            }
+            else {
+                response = await db.Relationship.create({
+                    performerId: data.performerId,
+                    receiverId: data.receiverId,
+                    action: 'follow'
+                })
+            }
+
+            resolve({
+                errCode: 0,
+                message: 'OK',
+                relate: response,
+                check: res.check
+            });
+        }
+        catch (error) {
+            reject(error)
+        }
+    })
+}
+let getFollowsService = async () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let follows = await db.Relationship.findAll();
+            resolve({
+                data: follows,
+                errCode: 0,
+                message: 'OK'
+            });
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 module.exports = {
     createUserService,
     getUsersSevice,
     deleteUserService,
     getUserDetailService,
-    editUserService
+    editUserService,
+    followUserService,
+    getFollowsService
 }

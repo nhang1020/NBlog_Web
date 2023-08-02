@@ -3,7 +3,7 @@ import postService from '../services/postService';
 
 let createPost = async (req, res) => {
     let data = req.body;
-    if (!data.contents || !data.userId || !data.topic || !data.privacy) {
+    if (!data.userId || !data.topic || !data.privacy) {
         return res.status(200).json({
             errCode: 1,
             message: 'Missing require parameters',
@@ -21,8 +21,15 @@ let createPost = async (req, res) => {
     }
 }
 let getPosts = async (req, res) => {
+    let data = req.body;
+    if (!data.limit) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing parameters'
+        })
+    }
     try {
-        let response = await postService.getPostsService();
+        let response = await postService.getPostsService(data);
         return res.status(200).json(response)
     } catch (error) {
         console.log(error)
@@ -44,8 +51,49 @@ let deletePost = async (req, res) => {
         })
     }
 }
+
+let commentPost = async (req, res) => {
+    try {
+        let response = await postService.commentPostService(req.body);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
+let getComments = async (req, res) => {
+    try {
+        let response = await postService.getCommentsService(req.body);
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
+let likePost = async (req, res) => {
+    try {
+        let response = await postService.likePostService(req.body);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
+
 module.exports = {
     createPost,
     getPosts,
-    deletePost
+    deletePost,
+    commentPost,
+    getComments,
+    likePost,
 }

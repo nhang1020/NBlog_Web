@@ -1,0 +1,126 @@
+.container-user {
+    display: flex;
+    height: 80%;
+
+
+
+    .filter-user {
+        width: 25%;
+        padding: 2rem;
+        // box-shadow: -7px 7px 7px rgb(227, 227, 227);
+        // border-radius: 25px;
+        height: 100%;
+
+        .search {
+            width: 100%;
+            display: flex;
+
+            .search-user {
+                border: none;
+                width: 70%;
+                box-shadow: 0 1px 5px rgb(208, 208, 208);
+                transition: width 0.3s ease;
+                margin: auto;
+
+                &:focus {
+                    width: 100%;
+                }
+            }
+        }
+
+        .radio-filter {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+    }
+
+    .row {
+        width: 75%;
+        padding: 0 3%;
+
+        .card-user {
+            // border: 1px solid transparent;
+            // border-image: linear-gradient(0deg, rgba(0, 0, 0, 0), rgb(255, 181, 200), rgb(191, 172, 252), rgba(0, 0, 0, 0));
+            // border-image-slice: 1;
+            border: none;
+            width: 23%;
+            margin: 1%;
+            transition: all ease-in-out 0.2s;
+            border-radius: 15px;
+            box-shadow: 0px 2px 4px rgb(220, 220, 220);
+
+
+            .img {
+                margin-top: 3%;
+                overflow: hidden;
+                padding: 1px;
+                background: linear-gradient(0.25turn, rgb(253, 183, 202), rgb(199, 172, 255), rgb(164, 190, 255), rgb(137, 206, 251));
+                border-radius: 50%;
+
+                .card-img-top {
+                    transition: all ease-in-out 0.3s;
+                    border-radius: 50%;
+                }
+            }
+
+            &:hover {
+                box-shadow: 0px 2px 10px rgb(220, 220, 220);
+
+                .card-img-top {
+                    transform: scale(1.02);
+                    opacity: 0.8;
+                }
+            }
+
+            .btn-user {
+                font-weight: 700;
+                border: none;
+                box-shadow: 0px 1px 4px rgb(215, 215, 215);
+
+                &:hover {
+                    opacity: 0.7;
+                }
+
+                border-radius: 25px;
+            }
+
+            .followed {
+                background: -webkit-linear-gradient(0deg, #0074e7, #d388fc, #f44b4b);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .non-follow {
+                color: white;
+                background: linear-gradient(0.25turn, rgb(253, 183, 202), rgb(199, 172, 255), rgb(164, 190, 255), rgba(137, 206, 251, 0.7));
+            }
+
+            .remove {
+                color: gray;
+            }
+
+        }
+    }
+}
+
+@media only screen and (max-width: 700px) {
+    .container-user {
+        display: block;
+
+        .filter-user {
+            width: 100%;
+        }
+
+        .row {
+            width: 100%;
+            padding: auto;
+
+            .card-user {
+                width: 46%;
+                margin: 2%;
+            }
+        }
+    }
+}

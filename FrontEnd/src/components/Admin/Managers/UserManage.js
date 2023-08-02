@@ -53,7 +53,9 @@ const UserManage = () => {
         data.push(obj);
     })
     useEffect(() => {
-        dispatch(getUsers("All"));
+        dispatch(getUsers({
+            limit: "All"
+        }));
     }, [dispatch]);
     const handleDeleteUser = (userId) => {
         dispatch(deleteUser(userId));

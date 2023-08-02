@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate, useLocation, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import AppClient from './components/AppClient';
 import Home from './components/Client/Pages/Home';
 import AdminHome from './components/Admin/Home';
@@ -11,7 +11,7 @@ import Register from './components/Auth/Register'
 import NotFound from './components/Client/Pages/NotFound'
 import Toast from './components/componentsCustom/toast';
 import appSlice from './redux/silceReducers/appSlice'
-import Product from './components/Client/Pages/Products'
+import MakeFriend from './components/Client/Pages/MakeFriend'
 import PersonalPage from './components/Client/Pages/PersonalPage'
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -33,6 +33,11 @@ function App() {
         dispatch(appSlice.actions.logOut());
       }
     });
+    // window.addEventListener('storage', (event) => {
+    //   if (event.storageArea === localStorage && event.key === 'userInfo') {
+    //     dispatch(appSlice.actions.logOut());
+    //   }
+    // });
     setIsLogIn(login);
     if (user) {
       setUserRole(user.role);
@@ -49,7 +54,7 @@ function App() {
             </PrivateRoute>
           } >
             <Route index element={<Home />} />
-            <Route path='products' element={<Product />} />
+            <Route path='make-friend' element={<MakeFriend />} />
             <Route path="/*" element={<NotFound />} />
             <Route path='/user/info/:id' element={<PersonalPage />} />
           </Route>

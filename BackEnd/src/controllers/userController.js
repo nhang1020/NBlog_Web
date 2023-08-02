@@ -3,7 +3,7 @@ import userService from '../services/userService';
 
 let getUsers = async (req, res) => {
     try {
-        let response = await userService.getUsersSevice(req.query.limit);
+        let response = await userService.getUsersSevice(req.body);
         return res.status(200).json(response)
     } catch (error) {
         console.log(error)
@@ -62,11 +62,36 @@ let editUser = async (req, res) => {
     let response = await userService.editUserService(data);
     return res.status(200).json(response);
 }
-
+let followUser = async (req, res) => {
+    try {
+        let response = await userService.followUserService(req.body);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
+let getFollows = async (req, res) => {
+    try {
+        let response = await userService.getFollowsService(req.body);
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
 module.exports = {
     createUser,
     getUsers,
     deleteUser,
     getUserDetail,
     editUser,
+    followUser,
+    getFollows
 }

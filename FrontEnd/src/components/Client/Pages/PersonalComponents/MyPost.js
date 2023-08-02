@@ -1,92 +1,76 @@
 import React, { useEffect, useState, useTransition } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { postsRemainingSelector, postImagesRemainingSelector, userInfoSelector } from '../../../../redux/selector';
+import { userInfoSelector, userPostsRemainingSelector } from '../../../../redux/selector';
 import { NavLink } from 'react-router-dom'
-import { Card, Avatar, Button, Skeleton, Popover, Popconfirm, message, Spin } from 'antd';
-import Comment from './MainComponents/Comment';
+import { Card, Avatar, Button, Skeleton, Popover, Popconfirm, Spin } from 'antd';
+import Comment from '../HomeComponents/MainComponents/Comment';
 import { formatDateEn, formatDateVi } from '../../../componentsCustom/customTime';
-import { deletePost, getPosts } from '../../../../redux/silceReducers/postSlice';
+import { deletePost, getUserPosts } from '../../../../redux/silceReducers/postSlice';
 import { v1 } from 'uuid'
 import { useTranslation } from 'react-i18next'
 import InfiniteScroll from "react-infinite-scroll-component";
 import { convertImage } from '../../../../utils/constants';
 import { icons } from '../../../../utils/constants';
-import './MainComponents/MainContent.scss';
 import Lighbox from '../../../componentsCustom/Lightbox';
-
-const MainContent = React.memo(() => {
-    const [messageApi, contextHolder] = message.useMessage();
+const MainContent = React.memo((props) => {
+    const [isPending, startTransition] = useTransition();
     const dispatch = useDispatch();
     const [listPosts, setListPosts] = useState([]);
     const [listImages, setListImages] = useState([]);
     const language = useSelector(state => state.app.language);
     const user = useSelector(userInfoSelector);
     const { t } = useTranslation();
-    const posts = useSelector(postsRemainingSelector);
-    const images = useSelector(postImagesRemainingSelector);
+    const posts = useSelector(userPostsRemainingSelector);
+    const images = useSelector(state => state.post.images);
     const [offset, setOffset] = useState(0);
     const [idx, setIdx] = useState(0);
     const [imgIndex, setImgIndex] = useState(-1);
-    const [isPending, startTransition] = useTransition();
+    const loading = useSelector(state => state.post.postLoading);
     useEffect(() => {
-        if (!posts.length || !images.length) {
-            dispatch(getPosts({
-                offset: offset,
-                limit: 5
-            }));
-        }
-    }, [dispatch]);
-    useEffect(() => {
+        // if (!posts.length || !images.length) {
         startTransition(() => {
-            setListPosts(posts);
-            setListImages(images);
+            dispatch(getUserPosts({
+                offset: offset,
+                limit: 5,
+                userId: props.userId
+            }));
         })
+        // }
+    }, [dispatch]);
 
+    useEffect(() => {
+        setListPosts(posts);
+        setListImages(images);
     }, [posts, images]);
 
     const hanldeDeletePost = (id) => {
-        dispatch(deletePost(id)).then((res) => {
-            if (res.payload.errCode === 0) {
-                messageApi.success("Xóa thành công")
-            } else {
-                messageApi.error(res.payload.message);
-            }
-        });
+        dispatch(deletePost(id));
     }
     const fetchMoreData = () => {
-        dispatch(getPosts({ offset: offset + 5, limit: 5 })).then((res) => {
-            let list = listPosts.concat(res.payload.data);
-            setListPosts(list)
-        });
+        startTransition(() => {
+            dispatch(getUserPosts({ offset: offset + 5, limit: 5, userId: props.userId })).then((res) => {
+                let list = listPosts.concat(res.payload.data);
+                setListPosts(list)
+            });
+        })
         setOffset((prevOffset) => prevOffset + 5);
     };
     const getPhoto = (index, postId) => {
         setImgIndex(index);
         setIdx(postId);
     }
-    const createClass = (list) => {
-        let length = list.length;
-        if (length === 1) {
-            return 'one-item'
-        } else if (length === 2) {
-            return 'two-items'
-        } else {
-            return 'photo'
-        }
-    }
     return (
         <>
-            {contextHolder}
             {isPending ? <Spin style={{ width: '100%' }} /> : null}
             <InfiniteScroll
                 dataLength={listPosts.length + 5}
                 next={fetchMoreData}
                 hasMore={true}
-                loader={<Card className='m-3' title='Loading...'> <Skeleton avatar active /></Card>}
+                loader={isPending ? <Spin style={{ width: '100%' }} /> : null}
             >
                 <div className='m-3'>
                     {listPosts && listPosts.length > 0 && listPosts.map((item, index) => {
-                        return (
+                        return item.userId == props.userId ? (
                             <Card key={index} className='mt-3 card-custom'>
                                 <div className='card-header'>
                                     <div className='flex-heder'>
@@ -143,41 +127,38 @@ const MainContent = React.memo(() => {
                                 </div>
                                 <div className='images'>
                                     {
-                                        listImages && listImages.some(img => img.postId === item.id) === true ?
+                                        listImages.some(img => img.postId === item.id) === true ?
 
                                             <div className='mt-3'>
-
+                                                {/* <Carousel data-bs-theme="dark"
+                                                interval={null} className='carousel'>
+                                                {listImages && listImages.length > 0 &&
+                                                    listImages.map((imageItem, imgIndex) => {
+                                                        return imageItem.postId === item.id ?
+                                                            <Carousel.Item key={imgIndex}>
+                                                                <img
+                                                                    className="d-block "
+                                                                    src={convertImage(imageItem.image)}
+                                                                    alt="silde"
+                                                                />
+                                                            </Carousel.Item>
+                                                            : ''
+                                                    })
+                                                }
+                                            </Carousel> */}
                                                 {listImages && listImages.length > 0 &&
                                                     listImages
                                                         .filter(i => i.postId == item.id)
                                                         .map
                                                         ((imageItem, imgIndex) => {
                                                             return imageItem.postId === item.id ?
-                                                                <div key={imgIndex} className={`${createClass(listImages
-                                                                    .filter(i => i.postId == item.id))} ${listImages
-                                                                        .filter(i => i.postId == item.id).length === 5 &&
-                                                                        (imgIndex === 3 || imgIndex === 4) ? 'another-items' : ''} ${listImages
-                                                                            .filter(i => i.postId == item.id).length === 4 && imgIndex === 3 ? 'fourth-item' : ''}`}
-
+                                                                <div className={listImages
+                                                                    .filter(i => i.postId == item.id).length > 1 ? 'photo' : 'one-item'}
                                                                     style={{ background: `url(${convertImage(imageItem.image)})` }}
                                                                     onClick={() => getPhoto(imgIndex, item.id)}></div>
                                                                 : null
                                                         })
                                                 }
-                                                {/* {
-                                                    listImages
-                                                        .filter(i => i.postId == item.id)
-                                                        .map(m => ({ src: convertImage(m.image) })).length > 5 && (
-                                                        <div className='more-photos'
-                                                            onClick={() => getPhoto(6, item.id)}
-                                                        >
-                                                            <h3>+{listImages
-                                                                .filter(i => i.postId == item.id)
-                                                                .map(m => ({ src: convertImage(m.image) })).length - 5}
-                                                            </h3>
-                                                        </div>
-                                                    )
-                                                } */}
                                             </div>
                                             : ''}
                                 </div>
@@ -186,7 +167,7 @@ const MainContent = React.memo(() => {
                                     <Comment post={item} />
                                 </div>
                             </Card>
-                        )
+                        ) : null
                     })
                     }
                 </div>

@@ -1,6 +1,6 @@
 import Container from 'react-bootstrap/Container';
-import { Input, Dropdown, Button } from 'antd';
-import { SearchOutlined, HomeOutlined, ShoppingOutlined, ReadOutlined, UserAddOutlined, LeftOutlined } from '@ant-design/icons';
+import { Input, Dropdown, Button, Badge } from 'antd';
+import { SearchOutlined, HomeOutlined, UserOutlined, UsergroupAddOutlined, BellOutlined } from '@ant-design/icons';
 import Navbar from 'react-bootstrap/Navbar';
 import { NavLink } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import './styles/ClientHeader.scss';
 
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 const Header = () => {
     const { t } = useTranslation();
     const { i18n } = useTranslation();
@@ -52,7 +53,7 @@ const Header = () => {
         <div className='header'>
             <Navbar expand="lg" className="nav-header">
                 <div className='left-header'>
-                    <Input className='rounded-pill' bordered={false} placeholder={t('search')} prefix={<SearchOutlined />} />
+                    {/* <Input className='rounded-pill' bordered={false} placeholder={t('search')} prefix={<SearchOutlined />} /> */}
                 </div>
                 <Container>
 
@@ -62,34 +63,29 @@ const Header = () => {
                         to="/">
                         <HomeOutlined className='button' />
                     </NavLink>
-                    <NavLink
-                        data-tooltip-content={t("sell")}
-                        className='nav-link'
-                        to="products">
-                        <ShoppingOutlined className='button' />
-                    </NavLink>
-                    <NavLink className='nav-link'
-                        data-tooltip-content={t("post")}
-                        to="/posts">
-                        <ReadOutlined className='button' />
-                    </NavLink>
 
                     <NavLink className='nav-link'
                         data-tooltip-content={t("find-friend")}
-                        to="/friends">
-                        <UserAddOutlined className='button' />
+                        to="/make-friend">
+                        <UsergroupAddOutlined className='button' />
                     </NavLink>
-
-
+                    <Button className='border-0 nav-link'>
+                        <Badge count={0}>
+                            <BellOutlined style={{ fontSize: '15pt' }} />
+                        </Badge>
+                    </Button>
                     <Dropdown
                         menu={{
                             items,
                         }}
                         placement="bottom"
                     >
-                        <LeftOutlined className='nav-link dropdown-hover button' style={{ cursor: 'pointer' }} />
+                        <UserOutlined className='nav-link dropdown-hover button' style={{ cursor: 'pointer' }} />
+
                     </Dropdown>
 
+
+                    <Input className='rounded-pill' placeholder={t('search')} prefix={<SearchOutlined />} />
 
                 </Container>
                 <div className='right-header'>

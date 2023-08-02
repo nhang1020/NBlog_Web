@@ -2,17 +2,7 @@
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
 
-var salt = bcrypt.genSaltSync(10);
-let hashUserPassword = (password) => {
-    return new Promise(async (resovle, reject) => {
-        try {
-            var hashPassword = await bcrypt.hashSync(password, salt);
-            resovle(hashPassword);
-        } catch (error) {
-            reject(error)
-        }
-    })
-}
+
 let checkEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -37,10 +27,11 @@ let handleLoginService = (email, password) => {
                 let user = await db.User.findOne({
                     attributes: ['id', 'email', 'role', 'password', 'firstName', 'lastName', 'avatar'],
                     where: { email: email },
-                    raw: true
                 })
                 if (user) {
-                    let checkPassword = bcrypt.compareSync(password, user.password);
+                    let getPassword = user.password ? user.password : JSON.stringify(user.password)
+                    let checkPassword = bcrypt.compareSync(password, getPassword);
+
                     if (checkPassword) {
                         userData.errCode = 0;
                         userData.message = "OK";

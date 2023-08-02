@@ -40,8 +40,10 @@ const App = (props) => {
         setAddress(user.address);
         setPhoneNumber(user.phoneNumber);
         setGender(user.gender);
-        let timeVal = moment(user.birth).toDate();
-        setBirth(timeVal.toISOString().slice(0, 10).replace('T', ' '));
+        if (user.birth) {
+            let timeVal = moment(user.birth).toDate();
+            setBirth(timeVal.toISOString().slice(0, 10).replace('T', ' '));
+        }
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -85,8 +87,10 @@ const App = (props) => {
         })
     }
     const onChangeBirth = (value) => {
-        if (value) {
+        if (value && new Date().getFullYear() - value.$d.getFullYear() > 14) {
             setBirth(moment(value.$d).format("YYYY-MM-DD"));
+        } else {
+            messageApi.error("Bạn phải đủ từ 14 tuổi trở lên.")
         }
     }
     const onChangeGender = (value) => {
@@ -115,7 +119,7 @@ const App = (props) => {
     return (
         <div ref={containerRef}>
             {contextHolder}
-            <Button className='info-detail' onClick={(showModal)}>{t("view-info-detail")}</Button>
+            <Button className='info-detail shadow-1' onClick={(showModal)}>{t("view-info-detail")}</Button>
             <Modal width={size} title={t("info-detail")} open={isModalOpen} onCancel={handleCancel}
                 okText={t("save-bio")} cancelText={t("cancel")}
                 onOk={saveBio}
@@ -130,7 +134,7 @@ const App = (props) => {
                                 onChange={onChangePhoneNumber}
                                 value={phoneNumber} type='number' placeholder={t("phone-number")} />
 
-                            <DatePicker value={dayjs(birth, language === 'vi' ? 'YYYY/MM/DD' : 'YYYY/DD/MM')}
+                            <DatePicker value={dayjs(birth !== '' ? birth : '2023-01-01', language === 'vi' ? 'YYYY/MM/DD' : 'YYYY/DD/MM')}
                                 className='control' onChange={onChangeBirth} placeholder='Ngày sinh'
                                 format={dateFormatList} />
                             <Select placeholder={t("gender")}

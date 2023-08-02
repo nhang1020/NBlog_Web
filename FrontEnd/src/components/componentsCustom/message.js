@@ -1,10 +1,10 @@
-import { Button, message, Space } from 'antd';
+import { message } from 'antd';
 
 const [messageApi, contextHolder] = message.useMessage();
-export const success = () => {
+export const success = (message) => {
     messageApi.open({
         type: 'success',
-        content: 'This is a success message',
+        content: message,
     });
 };
 export const error = () => {

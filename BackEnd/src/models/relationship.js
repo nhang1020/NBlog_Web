@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
         }
     };
     Relationship.init({
-        performerId: DataTypes.STRING,
-        receiverId: DataTypes.STRING,
+        performerId: DataTypes.INTEGER,
+        receiverId: DataTypes.INTEGER,
         action: DataTypes.STRING
     }, {
         sequelize,
