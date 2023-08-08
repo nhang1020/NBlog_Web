@@ -30,7 +30,8 @@ const appSlice = createSlice({
         loading: false,
         error: null,
         language: language ? language : 'vi',
-        isLogIn: isLogInStorage ? isLogInStorage : null
+        isLogIn: isLogInStorage ? isLogInStorage : null,
+        keyWord: '',
     },
     reducers: {
         logOut: (state, action) => {
@@ -41,6 +42,9 @@ const appSlice = createSlice({
         changeLanguage: (state, action) => {
             state.language = action.payload;
             localStorage.setItem('language', action.payload)
+        },
+        search: (state, action) => {
+            state.keyWord = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -62,7 +66,7 @@ const appSlice = createSlice({
                     localStorage.setItem('isLogIn', true);
                     localStorage.setItem('userInfo', JSON.stringify(res.user));
                     state.isLogIn = true;
-                    toast("🔓 Login success");
+                    toast.success("Login success");
                 }
             })
             .addCase(login.rejected, (state, action) => {
@@ -99,7 +103,7 @@ const appSlice = createSlice({
                     localStorage.setItem('isLogIn', true);
                     localStorage.setItem('userInfo', JSON.stringify(res.user));
                     state.isLogIn = true;
-                    toast("🔓 Login success");
+                    toast.success("Login success");
                 }
             })
             .addCase(loginSocial.rejected, (state, action) => {

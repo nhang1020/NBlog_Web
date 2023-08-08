@@ -1,14 +1,13 @@
-import { MessageOutlined, LikeFilled, SendOutlined, SmileOutlined, LikeOutlined } from '@ant-design/icons'
+import { SendOutlined, SmileOutlined } from '@ant-design/icons'
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, Drawer, Empty, Input, Popover, Spin } from 'antd';
-import './Comment.scss'
+import '../styles/Comment.scss'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { v1 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux'
 import { commentPost, getComments, likePost } from '../../../../../redux/silceReducers/postSlice'
 import { likePostsRemainingSelector, userInfoSelector } from '../../../../../redux/selector';
-import { Scrollbars } from 'react-custom-scrollbars-2';
 import { formatDateEn, formatDateVi } from '../../../../componentsCustom/customTime';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -108,72 +107,71 @@ const Comment = (props) => {
                 open={open} onClose={onClose}
                 extra={<h5>{list.length} bình luận</h5>}>
                 <div className='cmt'>
-                    <Scrollbars style={{ width: '100%', height: '90%' }}>
-                        <div className='comment-content'>
+                    <div className='comment-content'>
 
-                            {list.length > 0 && list.map((item, index) => {
-                                return !item.parentComment ? <div key={index} className='mb-5'>
-                                    <div className='flex-heder'>
-                                        <div className='avatar'>
-                                            <NavLink to={`/user/info/${item.userComment.id}`}>
-                                                {item.userComment.avatar ?
-                                                    <Avatar src={convertImage(item.userComment.avatar)} size="large" />
-                                                    :
-                                                    <Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel" size="large" />
-                                                }
-                                            </NavLink>
-                                        </div>
-                                        <div className='text'>
-                                            <div className='info'>
-                                                <div style={{ display: 'flex' }}>
-                                                    <NavLink to={`/user/info/${item.userComment.id}`} className='nav-link'>
-                                                        {language === 'vi' ? `${item.userComment.lastName} ${item.userComment.firstName}`
-                                                            : `${item.userComment.firstName} ${item.userComment.lastName}`}
-                                                    </NavLink>
-                                                    {item.userComment.role === 'R0' ?
-                                                        <Popover content={t("admin")} placement='topLeft'>
-                                                            <i className="bi bi-patch-check-fill text-primary m-2"></i>
-                                                        </Popover> : ''}
-                                                </div>
-
-                                                &nbsp;
-                                                <p className='time'>
-                                                    &#x2022; {language === 'vi' ? formatDateVi(item.createdAt) : formatDateEn(item.createdAt)}
-                                                </p>
-                                            </div>
-                                            <div className='contents'>
-                                                <p>{item.content}</p>
-                                                <div style={{ width: '100%' }}>
-                                                    <label
-                                                        htmlFor='input'
-                                                        onClick={() => onReply(`${item.userComment.lastName} ${item.userComment.firstName}`, item.id)}
-                                                        className='btn border-0 p-0'>Trả lời
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        {listChild.length > 0 && listChild.map((childItem, childIndex) => {
-                                            if (childItem.parentComment && childItem.parentComment === item.id) {
-                                                return <div key={childIndex}> <CardComment
-                                                    onReply={onReply}
-                                                    childItem={childItem} index={childIndex}
-                                                /></div>
+                        {list.length > 0 && list.map((item, index) => {
+                            return !item.parentComment ? <div key={index} className='mb-5'>
+                                <div className='flex-heder'>
+                                    <div className='avatar'>
+                                        <NavLink to={`/user/info/${item.userComment.id}`}>
+                                            {item.userComment.avatar ?
+                                                <Avatar src={convertImage(item.userComment.avatar)} size="large" />
+                                                :
+                                                <Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel" size="large" />
                                             }
-                                        })
-                                        }
+                                        </NavLink>
                                     </div>
-                                </div> : ''
-                            })
-                            }
-                            {isLoading === true ? <Spin style={{ margin: 'auto', width: '100%' }} /> :
-                                <> {list.length === 0 ? <Empty description={'Hãy là người bình luận đầu tiên'} /> : ''}</>}
+                                    <div className='text'>
+                                        <div className='info'>
+                                            <div style={{ display: 'flex' }}>
+                                                <NavLink to={`/user/info/${item.userComment.id}`} className='nav-link'>
+                                                    {language === 'vi' ? `${item.userComment.lastName} ${item.userComment.firstName}`
+                                                        : `${item.userComment.firstName} ${item.userComment.lastName}`}
+                                                </NavLink>
+                                                {item.userComment.role === 'R0' ?
+                                                    <Popover content={t("admin")} placement='topLeft'>
+                                                        <i className="bi bi-patch-check-fill text-primary m-2"></i>
+                                                    </Popover> : ''}
+                                            </div>
 
-                        </div>
-                    </Scrollbars>
+                                            &nbsp;
+                                            <p className='time'>
+                                                &#x2022; {language === 'vi' ? formatDateVi(item.createdAt) : formatDateEn(item.createdAt)}
+                                            </p>
+                                        </div>
 
+                                        <div className='contents'>
+                                            <p>{item.content}</p>
+                                            <div style={{ width: '100%' }}>
+                                                <label
+                                                    htmlFor='input'
+                                                    onClick={() => onReply(`${item.userComment.lastName} ${item.userComment.firstName}`, item.id)}
+                                                    className='btn border-0 p-0'>Trả lời
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div>
+                                    {listChild.length > 0 && listChild.map((childItem, childIndex) => {
+                                        if (childItem.parentComment && childItem.parentComment === item.id) {
+                                            return <div key={childIndex}> <CardComment
+                                                onReply={onReply}
+                                                childItem={childItem} index={childIndex}
+                                            /></div>
+                                        }
+                                    })
+                                    }
+                                </div>
+                            </div> : ''
+                        })
+                        }
+                        {isLoading === true ? <Spin style={{ margin: 'auto', width: '100%' }} /> :
+                            <> {list.length === 0 ? <Empty description={'Hãy là người bình luận đầu tiên'} /> : ''}</>}
+
+                    </div>
                     <div className='form-comment'>
                         <Popover placement="topLeft" content={emoji} trigger="click">
                             <Button className='send border-0'><SmileOutlined /></Button>

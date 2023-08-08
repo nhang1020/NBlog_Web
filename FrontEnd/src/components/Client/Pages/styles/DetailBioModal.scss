@@ -1,3 +1,5 @@
+$boxshadow1: 0 2px 7px rgb(224, 224, 224) !important;
+
 .form-group {
     .select {
         display: flex;
@@ -9,7 +11,7 @@
 
         .css-13cymwt-control {
             border: none;
-            box-shadow: 0 2px 7px rgb(224, 224, 224) !important;
+            box-shadow: $boxshadow1;
         }
 
         .css-t3ipsp-control {
@@ -24,6 +26,8 @@
             .address {
                 width: 48%;
                 margin: 2%;
+                border: none;
+                box-shadow: $boxshadow1;
             }
         }
 
@@ -37,11 +41,12 @@
             }
 
             .input {
-                box-shadow: 0 2px 7px rgb(224, 224, 224) !important;
+                box-shadow: $boxshadow1;
                 border: none;
             }
         }
     }
+
 }
 
 .edit-btn {
@@ -50,11 +55,65 @@
 
 .form {
     display: flex;
+    width: 100%;
 
-    .control {
-        width: 32%;
-        margin: auto 2%;
+    .contain1 {
+        width: 60%;
+        display: flex;
+        background: #fff;
+
+        .control {
+            width: 65%;
+            margin: auto 2%;
+            border: none;
+            box-shadow: $boxshadow1;
+        }
+
+        .control2 {
+            width: 35%;
+            margin: auto 2%;
+            box-shadow: $boxshadow1;
+
+            .ant-select-selector {
+                border: none;
+            }
+        }
+
+        .name {
+            width: 65%;
+
+            .control-name {
+                width: 48%;
+                margin: auto 1%;
+                box-shadow: $boxshadow1;
+                border: none;
+            }
+        }
     }
+
+    .contain2 {
+        width: 40%;
+        display: flex;
+        background: #fff;
+
+        .control {
+            width: 65%;
+            margin: auto 2%;
+            border: none;
+            box-shadow: $boxshadow1;
+        }
+
+        .control2 {
+            width: 35%;
+            margin: auto 2%;
+            box-shadow: $boxshadow1;
+
+            .ant-select-selector {
+                border: none;
+            }
+        }
+    }
+
 }
 
 @media only screen and (max-width: 1200px) {
@@ -67,6 +126,18 @@
                 width: 100%;
             }
 
+        }
+
+
+    }
+
+    .form {
+        display: inline;
+
+        .contain1,
+        .contain2 {
+            width: 100%;
+            margin-top: 10px;
         }
     }
 }

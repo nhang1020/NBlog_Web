@@ -1,23 +1,33 @@
 import Container from 'react-bootstrap/Container';
-import { Input, Dropdown, Button, Badge } from 'antd';
-import { SearchOutlined, HomeOutlined, UserOutlined, UsergroupAddOutlined, BellOutlined } from '@ant-design/icons';
+import { Input, Dropdown, Button, Badge, Popover, AutoComplete, Avatar, Form } from 'antd';
+import { SearchOutlined, HomeOutlined, UserOutlined, UsergroupAddOutlined, BellOutlined, SettingOutlined, LogoutOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import Navbar from 'react-bootstrap/Navbar';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import 'react-toastify/dist/ReactToastify.css';
 import appSlice from '../redux/silceReducers/appSlice';
-import { userInfoSelector } from '../redux/selector'
+import { getUsersRemainingSelector, userInfoSelector, usersRemainingSelector } from '../redux/selector'
 import { useDispatch, useSelector } from 'react-redux';
 import './styles/ClientHeader.scss';
 
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
+
+import { ReactSearchAutocomplete } from 'react-search-autocomplete'
+import { convertImage, noAvatar, toAlias, toSearchAlias } from '../utils/constants';
+import { getUsers } from '../redux/silceReducers/userSlice';
 const Header = () => {
     const { t } = useTranslation();
+    const currentUrl = window.location.href;
+    const [isPending, startTransition] = useTransition();
     const { i18n } = useTranslation();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector(userInfoSelector);
     const lang = useSelector(state => state.app.language);
+    const listUsers = useSelector(getUsersRemainingSelector);
+    const [users, setUsers] = useState([]);
+    const [searchText, setSearchText] = useState('');
     const handleLogOut = () => {
         dispatch(appSlice.actions.logOut());
     }
@@ -25,30 +35,69 @@ const Header = () => {
         i18n.changeLanguage(language);
         dispatch(appSlice.actions.changeLanguage(language));
     };
+    useEffect(() => {
+        setUsers(listUsers.map(item => { return { id: item.id, name: `${item.firstName} ${item.lastName}`, avatar: item.avatar } }));
+    }, [listUsers]);
+
     const items = [
-        {
-            key: '1',
-            label: (
-                <NavLink to={`/user/info/${user.id}`} className='nav-link' >
-                    {t("account")}
+        <NavLink to={`/user/info/${user.id}`} className='nav-link m-2' >
+            <UserOutlined /> <span className='l'>{t("account")}</span>
+        </NavLink>,
+        <>
+            {user.role === "R0" ?
+                <NavLink className='nav-link m-2' to='admin/'>
+                    <SettingOutlined />  <span className='l'>{t("admin")}</span>
                 </NavLink>
-            ),
-        },
-        {
-            key: '2',
-            label: (
-                <NavLink className='nav-link' >{t("setting")}</NavLink>
-            ),
-        },
-        {
-            key: '3',
-            label: (
-                <NavLink onClick={handleLogOut} className='nav-link' >
-                    {t("logout")}
-                </NavLink>
-            ),
-        },
+                : null}
+        </>
+        ,
+
+        <NavLink onClick={handleLogOut} className='nav-link m-2' >
+            <LogoutOutlined />  <span className='l'>{t("logout")}</span>
+        </NavLink>
+        ,
     ];
+
+    const handleOnSearch = (string) => {
+        setSearchText(string);
+    }
+
+
+    const handleOnSelect = (item) => {
+        // the item selected
+        navigate(`/user/info/${item.id}`);
+    }
+
+    const formatResult = (item) => {
+        return (
+            <>
+                <span style={{ display: 'block', textAlign: 'left', cursor: 'pointer' }}>
+                    <Avatar size={'small'} style={{ marginRight: '5px' }} src={item.avatar && item.avatar.data.length ? convertImage(item.avatar) : noAvatar} />
+                    {item.name}
+                </span>
+            </>
+        )
+    }
+    const handleOnFocus = () => {
+        if (listUsers.length === 0) {
+            dispatch(getUsers({
+                limit: 10,
+                userId: user.id
+            }));
+            startTransition(() => {
+                dispatch(getUsers({
+                    offset: 10,
+                    limit: 100,
+                    userId: user.id
+                }));
+            })
+        }
+    }
+    const handleSearch = () => {
+        dispatch(appSlice.actions.search(searchText));
+        navigate(`/search/${toSearchAlias(searchText)}`);
+    }
+
     return (
         <div className='header'>
             <Navbar expand="lg" className="nav-header">
@@ -69,25 +118,29 @@ const Header = () => {
                         to="/make-friend">
                         <UsergroupAddOutlined className='button' />
                     </NavLink>
-                    <Button className='border-0 nav-link'>
-                        <Badge count={0}>
-                            <BellOutlined style={{ fontSize: '15pt' }} />
-                        </Badge>
-                    </Button>
-                    <Dropdown
-                        menu={{
-                            items,
-                        }}
-                        placement="bottom"
-                    >
-                        <UserOutlined className='nav-link dropdown-hover button' style={{ cursor: 'pointer' }} />
-
-                    </Dropdown>
 
 
-                    <Input className='rounded-pill' placeholder={t('search')} prefix={<SearchOutlined />} />
+                    <Popover content={items} trigger={'click'} >
+                        <UserOutlined className={`nav-link dropdown-hover button ${currentUrl.includes('user') ? 'active' : ''}`}
+                            style={{ cursor: 'pointer' }} />
+                    </Popover>
 
+                    <Form onFinish={handleSearch} className='input-search'>
+                        <Form.Item name="searchText" className='rounded-pill'>
+                            <ReactSearchAutocomplete
+                                placeholder={t('search')}
+                                items={users}
+                                onSearch={handleOnSearch}
+                                onSelect={handleOnSelect}
+                                autoFocus
+                                formatResult={formatResult}
+                                onFocus={handleOnFocus}
+                            />
+                        </Form.Item>
+                        {searchText ? <Button htmlType='submit' className='btn-search btn border-0' ><ArrowRightOutlined /></Button> : null}
+                    </Form>
                 </Container>
+
                 <div className='right-header'>
                     <span className={lang === 'vi' ? 'lang active' : 'lang'}
                         onClick={() => handleChangeLanguage('vi')}>
@@ -99,6 +152,8 @@ const Header = () => {
                     </span>
                 </div>
             </Navbar>
+
+
 
             <Tooltip
                 anchorSelect=".nav-link"
@@ -114,7 +169,7 @@ const Header = () => {
                 }}
             />
 
-        </div>
+        </div >
 
     );
 }

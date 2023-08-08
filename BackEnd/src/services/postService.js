@@ -20,7 +20,7 @@ let getPostsService = (data) => {
 
             let haveImages = false;
 
-            let images = data.offset == 0 ?
+            let images = data.offset === 0 ?
                 await db.sequelize.query(`SELECT postFiles.*, users.id as userId FROM postFiles, posts, users  WHERE posts.id = postfiles.postId and users.id = posts.userId and(postFiles.postId in (SELECT posts.id FROM users, posts WHERE users.id=posts.userId))
                 `) : [];
             images.length ? haveImages = true : false;
@@ -130,6 +130,7 @@ let commentPostService = (data) => {
                 raw: true,
                 nest: true
             });
+
             resolve({
                 errCode: 0,
                 message: 'OK',
@@ -224,6 +225,73 @@ let likePostService = (data) => {
         }
     })
 }
+let getPostDetailService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let posts = await db.Post.findOne({
+                where: { id },
+                include: [
+                    { model: db.AllCode, as: 'privacyData', attributes: ['valueEn', 'valueVi'] },
+                    { model: db.User, as: 'userData', attributes: ['id', 'firstName', 'lastName', 'avatar', 'role'] },
+                ],
+                raw: true,
+                nest: true
+            });
+
+            if (posts) {
+                let images = await db.PostFile.findAll({
+                    where: { postId: posts.id }
+                });
+
+                let likes = await db.Like.findAll({
+                    where: { postId: posts.id }
+                });
+                resolve({
+                    errCode: 0,
+                    data: posts,
+                    images: images,
+                    likes: likes,
+                })
+            } else {
+                resolve({
+                    errCode: 0,
+                    data: {},
+                    images: [],
+                    likes: [],
+                })
+            }
+
+
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+let editPostService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let post = await db.Post.findOne({ where: { id: data.id }, raw: false });
+            if (post) {
+                post.contents = data.contents;
+                post.privacy = data.privacy;
+                await post.save();
+                let resPost = await db.Post.findOne({ where: { id: data.id } });
+                resolve({
+                    post: resPost,
+                    errCode: 0,
+                    message: 'Update post is success.'
+                });
+            } else {
+                resolve({
+                    errCode: 1,
+                    message: 'Post is not found'
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 
 module.exports = {
     createPostService,
@@ -232,4 +300,6 @@ module.exports = {
     commentPostService,
     getCommentsService,
     likePostService,
+    getPostDetailService,
+    editPostService
 }

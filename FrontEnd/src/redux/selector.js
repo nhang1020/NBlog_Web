@@ -3,18 +3,21 @@ import { toAlias } from "../utils/constants";
 
 export const allCodesSelector = (state) => state.admin.allCodes;
 export const userSelector = (state) => state.admin.users;
+
 export const isLogIn = (state) => state.app.isLogIn;
-export const userInfo = (state) => state.app.user;
+
 export const postSelector = (state) => state.post.posts;
 export const userPostsSelector = (state) => state.post.userPosts;
 export const postImagesSelector = (state) => state.post.images;
-export const userDetail = (state) => state.user.userDetail;
 export const likePostsSlector = (state) => state.post.likes;
-export const relationshipsSlector = (state) => state.user.relationships;
+export const tabSlector = (state) => state.post.tab;
 
+export const relationshipsSlector = (state) => state.user.relationships;
+export const userInfo = (state) => state.app.user;
 export const usersSelector = (state) => state.user.users;
 export const searchUserSelector = (state) => state.user.search;
 export const statusFilterSelector = (state) => state.user.status;
+export const userDetail = (state) => state.user.userDetail;
 
 export const allCodeRemainingSelector = createSelector(
     allCodesSelector,
@@ -69,6 +72,7 @@ export const userPostsRemainingSelector = createSelector(
         return posts
     })
 
+
 export const getUsersRemainingSelector = createSelector(
     usersSelector,
     searchUserSelector,
@@ -111,4 +115,19 @@ export const relationshipsRemainingSelector = createSelector(
     relationshipsSlector,
     (relationships) => {
         return relationships
+    })
+
+
+export const postDetailSelector = (state) => state.post.postDetail;
+export const imagesPostSelector = (state) => state.post.imagesPost;
+
+export const postDetailRemainingSelector = createSelector(
+    postDetailSelector,
+    (postDetailSelector) => {
+        return postDetailSelector
+    })
+export const imagesPostRemainingSelector = createSelector(
+    imagesPostSelector,
+    (imagesPostSelector) => {
+        return imagesPostSelector
     })

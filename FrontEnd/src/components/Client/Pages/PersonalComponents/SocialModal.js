@@ -1,41 +1,60 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Form, Input } from 'antd';
+import { Button, Modal, Form, Input, message } from 'antd';
 import { useTranslation } from 'react-i18next'
-import { useDispatch } from 'react-redux';
-import { followUser } from '../../../../redux/silceReducers/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { editUser, followUser } from '../../../../redux/silceReducers/userSlice';
 import { UserAddOutlined } from '@ant-design/icons';
-
 const App = (props) => {
+    const [messageApi, contextHolder] = message.useMessage();
     const { t } = useTranslation();
     const [form] = Form.useForm();
-    const link = props.socialLink
     const [isModalOpen, setIsModalOpen] = useState(false);
     const dispatch = useDispatch();
     const relationships = props.relationships;
+    const [user, setUser] = useState(props.user);
+    useEffect(() => {
+        setUser(props.user)
+    }, [props.user])
     const showModal = () => {
-        form.setFieldsValue({ facebook: link.facebook, youtube: link.youtube, twitter: link.twitter })
+        form.setFieldsValue({ facebook: user.facebook, youtube: user.youtube, twitter: user.twitter })
         setIsModalOpen(true);
     };
-    const handleOk = () => {
+    const handleOk = (userInput) => {
+        userInput.id = user.id;
         setIsModalOpen(false);
+        dispatch(editUser(userInput)).then((res) => {
+            if (res.payload.errCode === 0) {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Lưu thông tin cá nhân thành công!',
+                });
+            } else {
+                messageApi.open({
+                    type: 'success',
+                    content: res.payload.message,
+                });
+            }
+            console.log(res);
+        })
     };
     const hanldeFollow = (receiverId) => {
         dispatch(followUser({
-            performerId: props.user.id,
+            performerId: props.id,
             receiverId
         }))
     }
     return (
         <>
-            {props.id == props.user.id ?
+            {contextHolder}
+            {props.id == user.id ?
                 <Button className='border-0' onClick={showModal}><i className="bi bi-pen-fill"></i></Button> :
                 <>
-                    {relationships.some(relate => relate.performerId == props.user.id && relate.receiverId == props.id) === true ?
-                        <Button onClick={() => hanldeFollow(props.id)} className='btn-follow border-0 btn followed'>
+                    {relationships.some(relate => relate.performerId == props.id && relate.receiverId == user.id) === true ?
+                        <Button onClick={() => hanldeFollow(user.id)} className='btn-follow border-0 btn followed'>
                             <i className="bi bi-person-check-fill"></i>
                         </Button>
                         :
-                        <Button onClick={() => hanldeFollow(props.id)} className='btn-follow border-0 btn'>
+                        <Button onClick={() => hanldeFollow(user.id)} className='btn-follow border-0 btn'>
                             <i className="bi bi-person-plus-fill"></i>
                         </Button>
                     }
@@ -63,7 +82,7 @@ const App = (props) => {
                     </Form.Item>
 
                     <Form.Item label="" >
-                        <Button htmlType="submit">
+                        <Button htmlType="submit" className='btn-custom'>
                             {t("save")}
                         </Button>
                     </Form.Item>

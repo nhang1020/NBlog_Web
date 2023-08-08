@@ -19,11 +19,19 @@ const getCommentsService = (data) => {
 const likePostService = (data) => {
     return axios.post(`/api/like-post`, data);
 }
+const getPostDetailService = (id) => {
+    return axios.get(`/api/get-post-detail?id=${id}`);
+}
+const editPostService = (data) => {
+    return axios.put(`/api/edit-post`, data);
+}
 export {
     createPostService,
     getPostsService,
     deletePostService,
     commentPostService,
     getCommentsService,
-    likePostService
+    likePostService,
+    getPostDetailService,
+    editPostService
 }

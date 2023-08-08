@@ -66,7 +66,7 @@ const UserManage = () => {
             <Table
                 columns={columns}
                 dataSource={data}
-                className='container mt-5'
+                className='container'
             />
         </>
     )

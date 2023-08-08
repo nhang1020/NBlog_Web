@@ -145,3 +145,9 @@
     font-weight: 700;
     font-size: 18pt;
 }
+
+@media only screen and (max-width: 1240px) {
+    .modal-quick-post {
+        margin: auto !important;
+    }
+}

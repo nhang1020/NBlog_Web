@@ -9,7 +9,7 @@ export const USER_ROLE = {
     ADMIN: 'R1',
     USER: 'R2'
 }
-export const icons = [<i className="bi bi-globe-americas"></i>, <i className="bi bi-person-heart"></i>, <i className="bi bi-file-earmark-lock2"></i>]
+export const icons = [<i className="bi bi-globe-americas"></i>, <i className="bi bi-person-heart"></i>, <i className="bi bi-lock-fill"></i>]
 export const socialLink = { facebook: 'facebook', youtube: 'youtube', twitter: 'twitter' }
 export const convertImage = (image) => {
     let base64String = ''
@@ -24,4 +24,20 @@ export const noAvatar = 'https://anubis.gr/wp-content/uploads/2018/03/no-avatar.
 export const toAlias = (str) => {
     const alias = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     return alias.replace(/[^a-z0-9]/g, '');
+}
+export const toSearchAlias = (str) => {
+    const alias = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    return alias.replace(/[^a-z0-9]/g, '_');
+}
+
+
+export const createClass = (list) => {
+    let length = list.length;
+    if (length === 1) {
+        return 'one-item'
+    } else if (length === 2) {
+        return 'two-items'
+    } else {
+        return 'photo'
+    }
 }

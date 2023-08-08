@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Avatar, Popover } from 'antd';
-import './Comment.scss'
 import { useSelector, useDispatch } from 'react-redux'
 import { formatDateEn, formatDateVi } from '../../../../componentsCustom/customTime';
 import { NavLink } from 'react-router-dom';

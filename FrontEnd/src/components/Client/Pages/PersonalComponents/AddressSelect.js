@@ -22,11 +22,13 @@ const AddressSelect = (props) => {
         setEditAddressHide(!editAddressHide);
         setAddress(props.address);
         fetchProvinces().then((res) => {
-            const newProvince = res.map((item, index) => ({
-                value: item.code,
-                label: item.name
-            }))
-            setProvince(newProvince);
+            if (res) {
+                const newProvince = res.map((item, index) => ({
+                    value: item.code,
+                    label: item.name
+                }))
+                setProvince(newProvince);
+            }
         });
     }
     const onChangeAddress = (e) => {
@@ -81,7 +83,7 @@ const AddressSelect = (props) => {
                     <div className='s1'>
                         <Input
                             onChange={onChangeAddress}
-                            placeholder='số nhà, đường, khóm,...' className='address input' />
+                            placeholder='số nhà, đường, khóm,...' className='address input control' />
                         <Select
                             placeholder={t("province")}
                             defaultValue={selectedOption}

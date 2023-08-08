@@ -15,10 +15,14 @@ const sendEmailService = (data) => {
 const checkExistsEmailService = (email) => {
     return axios.post(`/api/check-exists-email`, email);
 }
+const searchService = (searchText) => {
+    return axios.post(`/api/search`, searchText);
+}
 export {
     loginService,
     userSignUpService,
     sendEmailService,
     checkExistsEmailService,
-    loginSocialService
+    loginSocialService,
+    searchService
 }

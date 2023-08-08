@@ -80,10 +80,30 @@ let checkExistsEmail = async (req, res) => {
         })
     }
 }
+let searchData = async (req, res) => {
+    let searchText = req.body.searchText;
+    try {
+        if (!searchText) {
+            return res.status(200).json({
+                errCode: 1,
+                message: 'Missing required parameters'
+            })
+        }
+        let data = await appServices.searchDataService(searchText);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
 module.exports = {
     getAllCode,
     handleLogin,
     handleSendEmail,
     checkExistsEmail,
-    handleLoginSocial
+    handleLoginSocial,
+    searchData
 }

@@ -1,6 +1,7 @@
 
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
+import { Op, where } from "sequelize";
 
 
 let checkEmail = (userEmail) => {
@@ -118,8 +119,57 @@ let getAllCodeService = () => {
     })
 }
 
+
+let searchDataService = (searchText) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let keyword = searchText.trim().replace(/\s+/g, ' ');
+            const resultArray = keyword.split(' ');
+            // let users = await db.sequelize.query(`SELECT id, firstName, lastName, avatar FROM users WHERE firstName LIKE '%${keyword}%' OR lastName LIKE '%${keyword}%' OR firstName in('${resultArray}') OR lastName in('${resultArray}')`, {
+            //     nest: true
+            // });
+            let users = await db.sequelize.query(`SELECT id, firstName, lastName, avatar, role FROM users WHERE firstName LIKE '%${keyword}%' OR lastName LIKE '%${keyword}%'`, {
+                nest: true
+            });
+
+            let posts = await db.Post.findAll({
+                order: [['createdAt', 'DESC']],
+                limit: 10,
+                include: [
+                    // { model: db.AllCode, as: 'topicData', attributes: ['valueEn', 'valueVi'] },
+                    { model: db.AllCode, as: 'privacyData', attributes: ['valueEn', 'valueVi'] },
+                    { model: db.User, as: 'userData', attributes: ['id', 'firstName', 'lastName', 'avatar', 'role'], },
+                ],
+                where: {
+                    [Op.or]: [
+                        { contents: { [Op.like]: `%${keyword}%` } },
+                        { '$userData.firstName$': { [Op.like]: `%${keyword}%` } },
+                        { '$userData.lastName$': { [Op.like]: `%${keyword}%` } },
+                    ],
+                },
+                raw: true,
+                nest: true
+            });
+            const idsArray = posts.map((item) => item.id);
+            let images = idsArray.length > 0 ? await db.sequelize.query(`SELECT * from postFiles WHERE postId in (${idsArray})`, {
+                nest: true
+            }) : [];
+            resolve({
+                errCode: 0,
+                users,
+                posts,
+                images
+            })
+
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     getAllCodeService,
     handleLoginService,
-    handleLoginSocialService
+    handleLoginSocialService,
+    searchDataService
 }

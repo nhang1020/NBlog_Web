@@ -1,12 +1,12 @@
-import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './styles/PersonalPage.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect, useState, useTransition } from 'react';
-import { Card, Empty, Popover, Skeleton, Spin } from 'antd'
+import { Card, Empty, Popover } from 'antd'
 import SocialModal from './PersonalComponents/SocialModal'
 import DetailBioModal from './PersonalComponents/DetailBioModal';
 import { getFollows, getUserDetail } from '../../../redux/silceReducers/userSlice';
-import { relationshipsRemainingSelector, userDetailRemainingSelector, userInfoSelector } from '../../../redux/selector';
+import { postImagesRemainingSelector, relationshipsRemainingSelector, userDetailRemainingSelector, userInfoSelector } from '../../../redux/selector';
 import AvatarModal from './PersonalComponents/AvatarModal';
 import { useTranslation } from 'react-i18next'
 import MyPost from './PersonalComponents/MyPost';
@@ -23,7 +23,7 @@ const PersonalPage = () => {
     const dispatch = useDispatch();
     const userInfo = useSelector(userInfoSelector);
     const getUser = useSelector(userDetailRemainingSelector);
-    const images = useSelector(state => state.post.images);
+    const images = useSelector(postImagesRemainingSelector);
     const [user, setUser] = useState({});
     const [isPending, startTransition] = useTransition();
     const [galleries, setGalleries] = useState([]);
@@ -73,11 +73,11 @@ const PersonalPage = () => {
                             </h4>
                             <p> {user.email} <i className="bi bi-envelope-at-fill"></i></p>
                             <p className='social-link'>
-                                <a href='https://www.facebook.com/profile.php?id=100011397988347' target='_blank' className='nav-link'> <i className="bi bi-facebook text-primary"></i></a>
-                                <a className='nav-link'> <i className="bi bi-youtube text-danger"></i></a>
-                                <a className='nav-link'> <i className="bi bi-twitter text-info"></i></a>
+                                <a href={getUser.facebook} target='_blank' className='nav-link'> <i className="bi bi-facebook text-primary"></i></a>
+                                <a href={getUser.youtube} target='_blank' className='nav-link'> <i className="bi bi-youtube text-danger"></i></a>
+                                <a href={getUser.twitter} target='_blank' className='nav-link'> <i className="bi bi-twitter text-info"></i></a>
 
-                                <SocialModal socialLink={socialLink} id={id} user={userInfo} relationships={relationships} />
+                                <SocialModal socialLink={socialLink} id={userInfo.id} user={getUser} relationships={relationships} />
                             </p>
                         </div>
                     </div>
@@ -105,7 +105,8 @@ const PersonalPage = () => {
                                 })
                                 }
                                 {galleries.length > 4 && (
-                                    <div className='more-photos' style={{ background: `url(${galleries[4].src})` }} onClick={() => setIndex(4)}>
+                                    <div className='more-photos' style={{ background: `url(${galleries[4].src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                                        onClick={() => setIndex(4)}>
                                         <h3>+{galleries.length - 4}</h3>
                                     </div>
                                 )}

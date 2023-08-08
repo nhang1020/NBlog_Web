@@ -73,8 +73,24 @@ hr {
         }
     }
 
+    ::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(80, 80, 80, 0.5);
+        border-radius: 5px;
+    }
+
     .comment-content {
         height: 90%;
+        // overflow-y: scroll;
+        overflow-y: scroll;
+
 
         .flex-heder {
             display: flex;
@@ -159,7 +175,7 @@ hr {
 .ant-drawer-content-wrapper {
     height: 70% !important;
     width: 42%;
-    margin: auto;
+    margin-left: 31%;
 
     .ant-drawer-content {
         border-radius: 10px;
@@ -172,6 +188,7 @@ hr {
     .ant-drawer-content-wrapper {
         height: 80% !important;
         width: 70%;
+        margin: auto;
     }
 
 }

@@ -22,6 +22,8 @@ let initWebRoutes = (app) => {
     router.post('/api/create-post', postController.createPost);
     router.post('/api/get-posts', postController.getPosts);
     router.delete('/api/delete-post', postController.deletePost);
+    router.get('/api/get-post-detail', postController.getPostDetail);
+    router.put('/api/edit-post', postController.editPost);
     //comment and like
     router.post('/api/comment-post', postController.commentPost);
     router.post('/api/get-comments', postController.getComments);
@@ -31,6 +33,8 @@ let initWebRoutes = (app) => {
     router.post('/api/follow-user', userController.followUser);
     router.get('/api/get-follows', userController.getFollows);
 
+    //search
+    router.post('/api/search', appController.searchData);
     return app.use("/", router)
 }
 

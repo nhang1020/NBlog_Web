@@ -10,14 +10,13 @@ function AppClient() {
 
             <Header />
             <div className="contain">
-                {/* <Scrollbars style={{ height: '100vh', width: '100%' }}> */}
+
                 <div className="main-content">
                     <AnimationPage>
                         <Outlet></Outlet>
                     </AnimationPage>
                 </div>
 
-                {/* </Scrollbars> */}
             </div>
         </>
     );

@@ -59,8 +59,16 @@ let getUserDetail = async (req, res) => {
 
 let editUser = async (req, res) => {
     let data = req.body;
-    let response = await userService.editUserService(data);
-    return res.status(200).json(response);
+    try {
+        let response = await userService.editUserService(data);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
 }
 let followUser = async (req, res) => {
     try {

@@ -88,7 +88,43 @@ let likePost = async (req, res) => {
         })
     }
 }
-
+let getPostDetail = async (req, res) => {
+    if (!req.query.id) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing parameters'
+        })
+    }
+    try {
+        let response = await postService.getPostDetailService(req.query.id);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
+let editPost = async (req, res) => {
+    let data = req.body;
+    if (!req.body.id) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing parameters'
+        })
+    }
+    try {
+        let response = await postService.editPostService(data);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
 module.exports = {
     createPost,
     getPosts,
@@ -96,4 +132,6 @@ module.exports = {
     commentPost,
     getComments,
     likePost,
+    getPostDetail,
+    editPost
 }

@@ -80,6 +80,7 @@ let getUsersSevice = async (option) => {
                 });
             } else {
                 users = await db.User.findAll({
+                    offset: option.offset ? option.offset : 0,
                     limit: +limit,
                     where: option.userId ? { id: { [Op.ne]: option.userId } } : {},
                     attributes: ['id', 'firstName', 'lastName', 'avatar', 'role'],
@@ -102,6 +103,17 @@ let deleteUserService = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({ where: { id: userId }, raw: false });
+            await db.Comment.destroy({ where: { userId: user.id } });
+            await db.Like.destroy({ where: { userId: user.id } });
+            await db.Relationship.destroy({
+                where: {
+                    [Op.or]: [
+                        { performerId: user.id },
+                        { receiverId: user.id },
+                    ],
+                }
+            });
+
             if (!user) {
                 resolve({
                     errCode: 2,
@@ -154,6 +166,9 @@ let editUserService = (data) => {
                 user.phoneNumber = data.phoneNumber;
                 user.address = data.address;
                 user.gender = data.gender;
+                user.facebook = data.facebook;
+                user.youtube = data.youtube;
+                user.twitter = data.twitter;
                 data.birth ? user.birth = data.birth : '',
                     user.profile = data.profile;
                 if (data.avatar) {

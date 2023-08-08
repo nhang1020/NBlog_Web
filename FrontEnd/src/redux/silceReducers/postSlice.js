@@ -39,6 +39,17 @@ export const likePost = createAsyncThunk("post/likePost", async (data) => {
         res
     );
 });
+export const getPostDetail = createAsyncThunk("post/getPostDetail", async (id) => {
+    return postServices.getPostDetailService(id).then((res) =>
+        res
+    );
+});
+
+export const editPost = createAsyncThunk("post/editPost", async (data) => {
+    return postServices.editPostService(data).then((res) =>
+        res
+    );
+});
 const postSlice = createSlice({
     name: 'post',
     initialState: {
@@ -50,9 +61,13 @@ const postSlice = createSlice({
         images: [],
         userPostImages: [],
         comments: [],
-        likes: []
+        likes: [],
+        postDetail: {},
+        imagesPost: [],
     },
-    reducers: {},
+    reducers: {
+
+    },
     extraReducers: (builder) => {
         builder
             //get posts
@@ -65,13 +80,15 @@ const postSlice = createSlice({
                 state.error = null;
                 const newData = action.payload.data;
                 const updatedPosts = [...state.posts];
+                if (newData) {
+                    newData.forEach(item => {
+                        if (!updatedPosts.some(post => post.id === item.id)) {
+                            updatedPosts.push(item);
+                        }
+                    });
+                    state.posts = updatedPosts
+                }
 
-                newData.forEach(item => {
-                    if (!updatedPosts.some(post => post.id === item.id)) {
-                        updatedPosts.push(item);
-                    }
-                });
-                state.posts = updatedPosts
 
                 if (action.payload.haveImages) {
                     state.images = action.payload.images
@@ -211,6 +228,47 @@ const postSlice = createSlice({
                 }
             })
             .addCase(likePost.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            //get post detail
+            .addCase(getPostDetail.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getPostDetail.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                if (action.payload.errCode === 0) {
+                    state.likes = action.payload.likes;
+                    state.imagesPost = action.payload.images;
+                    state.postDetail = action.payload.data;
+                }
+            })
+            .addCase(getPostDetail.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            //edit post
+            .addCase(editPost.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(editPost.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                let res = action.payload;
+                if (res.errCode === 0) {
+                    for (let i = 0; i < state.posts.length; i++) {
+                        if (state.posts[i].id === res.post.id) {
+                            state.posts[i].contents = res.post.contents;
+                            state.posts[i].privacy = res.post.privacy;
+                            break;
+                        }
+                    }
+                }
+            })
+            .addCase(editPost.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })

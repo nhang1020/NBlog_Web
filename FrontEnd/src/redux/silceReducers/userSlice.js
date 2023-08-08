@@ -8,6 +8,7 @@ export const getUserDetail = createAsyncThunk("user/getUserDetail", async (id) =
     );
 });
 export const editUser = createAsyncThunk("user/editUser", async (data) => {
+    console.log(data);
     return userServices.editUserService(data).then((res) =>
         res
     );
@@ -36,7 +37,7 @@ const postSlice = createSlice({
         error: null,
         relationships: [],
         search: '',
-        status: 'all'
+        status: 'all',
     },
     reducers: {
         removeUser: (state, action) => {
@@ -47,6 +48,21 @@ const postSlice = createSlice({
         },
         statusFilterChange: (state, action) => {
             state.status = action.payload;
+        },
+        sortName: (state, action) => {
+            if (action.payload === 'AtoZ') {
+                state.users = state.users.sort((person1, person2) => {
+                    const lastName1 = person1.firstName.toLowerCase();
+                    const lastName2 = person2.firstName.toLowerCase();
+                    return lastName1.localeCompare(lastName2);
+                });
+            } else {
+                state.users = state.users.sort((person1, person2) => {
+                    const lastName1 = person1.firstName.toLowerCase();
+                    const lastName2 = person2.firstName.toLowerCase();
+                    return lastName2.localeCompare(lastName1);
+                });
+            }
         },
     },
     extraReducers: (builder) => {
@@ -59,7 +75,18 @@ const postSlice = createSlice({
             .addCase(getUsers.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = null;
-                state.users = action.payload.data;
+                // state.users = action.payload.data;
+
+                const newData = action.payload.data;
+                const updatedUsers = [...state.users];
+
+                // Loại bỏ những phần tử trùng lặp từ newData
+                newData.forEach(item => {
+                    if (!updatedUsers.some(user => user.id === item.id)) {
+                        updatedUsers.push(item);
+                    }
+                });
+                state.users = updatedUsers;
             })
             .addCase(getUsers.rejected, (state, action) => {
                 state.loading = false;

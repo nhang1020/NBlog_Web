@@ -1,7 +1,7 @@
 import { Button, Input, Modal, Card, Avatar, Select, Col, Row, Upload, Popover, Radio } from 'antd';
 import { SmileOutlined, StopOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { createPost } from '../../../../../redux/silceReducers/postSlice'
+import { createPost, editPost } from '../../../../../redux/silceReducers/postSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { allCodeRemainingSelector, userInfoSelector } from '../../../../../redux/selector'
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ import { convertImage, icons } from '../../../../../utils/constants';
 import imageCompression from 'browser-image-compression';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react';
-import './ModalQuickPost.scss'
+import '../styles/ModalQuickPost.scss';
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -20,7 +20,7 @@ const getBase64 = (file) =>
 const { TextArea } = Input;
 
 
-const ModalQuickPost = () => {
+const ModalQuickPost = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
@@ -37,21 +37,34 @@ const ModalQuickPost = () => {
     const language = useSelector(state => state.app.language);
     const showModal = () => {
         setOpen(true);
-        setContents('');
-        setPrivacy('P0');
+        setContents(props.content ? props.content : '');
+        setPrivacy(props.privacy ? props.privacy : 'P0');
     };
     const handlePost = () => {
         setOpen(false);
-        setTimeout(() => {
-            dispatch(createPost({
-                userId: user.id,
-                topic: 'T1',
-                privacy: privacy,
-                contents: contents,
-                theme: theme,
-                listImage: fileList
-            }));
-        }, 500)
+
+        dispatch(createPost({
+            userId: user.id,
+            topic: 'T1',
+            privacy: privacy,
+            contents: contents,
+            theme: theme,
+            listImage: fileList
+        }));
+
+
+    };
+    const hanldeEdit = () => {
+        setOpen(false);
+        dispatch(editPost({
+            id: props.id,
+            contents: contents,
+            privacy: privacy,
+        })).then((res) => {
+            console.log(res);
+        });
+
+
 
     };
     const handleCancel = () => {
@@ -63,6 +76,7 @@ const ModalQuickPost = () => {
     //Upload
     const handleOnchangeContent = (e) => {
         setContents(e.target.value)
+
     }
 
     const handleCancelViewImage = () => setPreviewOpen(false);
@@ -95,8 +109,8 @@ const ModalQuickPost = () => {
 
     }
     const displayTheme = (value) => {
-        document.getElementById('write-content').classList.remove(theme);
-        document.getElementById('write-content').classList.add(value);
+        document.querySelector('.ck-content').classList.remove(theme);
+        document.querySelector('.ck-content').classList.add(value);
     }
     // const [styleTheme, setStyleTheme] = useState()
     function convertImagesToBase64(images) {
@@ -137,21 +151,28 @@ const ModalQuickPost = () => {
     );
     return (
         <>
-            <Button className='rounded-pill' size='large'
-                style={{ color: 'silver', width: '100%', textAlign: 'left' }}
-                onClick={showModal} >{`Hey ${user.firstName}! ${t("what-think")}`}</Button>
-
+            {!props.edit ?
+                <Button className='rounded-pill border-0 shadow-1' size='large'
+                    style={{ color: 'silver', width: '100%', textAlign: 'left' }}
+                    onClick={showModal} >{`Hey ${user.firstName}! ${t("what-think")}`}
+                </Button>
+                :
+                <Button className='border-0 d'
+                    onClick={showModal} > <i className="bi bi-sliders"></i>{t("edit-post")}
+                </Button>
+            }
             <Modal
-                width={'700px'}
-                title="Tạo bài viết mới"
+                // width={'100%'}
+                className='modal-quick-post'
+                style={{ marginLeft: '4%', minWidth: '42%' }}
+                title={props.edit ? t("edit-post") : t("create-post")}
                 centered
                 open={open}
-                onOk={handlePost}
                 onCancel={handleCancel}
-                footer={[<Button
+                footer={[<Button className='border-0 shadow-1'
                     disabled={contents || fileList ? false : true}
                     key=''
-                    onClick={handlePost}>{t("create")}
+                    onClick={props.edit ? hanldeEdit : handlePost}>{props.edit ? t("update") : t("create")}
                 </Button>]
                 }
             >
@@ -189,13 +210,14 @@ const ModalQuickPost = () => {
                 <TextArea
                     onChange={handleOnchangeContent}
                     placeholder={t("what-think")}
-                    className='mt-3 mb-5 content '
+                    className='mt-3 mb-5 content ck-content'
                     size='large'
                     bordered={false}
                     value={contents}
                     rows={7}
                     id='write-content'
                 />
+
                 <div className='content-more'>
                     <div className='theme'>
                         <Radio.Group
@@ -236,7 +258,6 @@ const ModalQuickPost = () => {
                     disabled={disableImage}
                 >
                     <div>
-
                         <div
                             style={{
                                 marginTop: 8,
